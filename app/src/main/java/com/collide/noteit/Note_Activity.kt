@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -65,7 +67,7 @@ class Note_Activity : AppCompatActivity() {
 
         }
 
-
+        registerForContextMenu(binding.etTitle)
 
         binding.saveBtn.setOnClickListener {
             if (!binding.etTitle.equals("") && !binding.etDesc.equals("")){
@@ -154,6 +156,7 @@ class Note_Activity : AppCompatActivity() {
 //            imageView.setImageResource(R.drawable.app_logo)
 //            Log.d("view", ""+data_image)
             imageView.setImageURI(it.data!!.data)
+            registerForContextMenu(imageView)
 
             var EditText = EditText(this)
             EditText.id = View.generateViewId()
@@ -225,6 +228,27 @@ class Note_Activity : AppCompatActivity() {
 
             }
 
+        }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menuInflater.inflate(R.menu.imageview_popup_custom, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.delete_option ->{
+                Log.d("data","Delete Clicked")
+                return true
+            }
+            else ->{
+                return super.onContextItemSelected(item)
+            }
         }
     }
 
