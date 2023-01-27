@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "328105423593",
+    "project_id": "noteit-5f36c",
+    "storage_bucket": "noteit-5f36c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328105423593:android:dfff30050694df6e3a7678",
+        "android_client_info": {
+          "package_name": "com.collide.noteit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328105423593-6shjs82acd8be9pc5a64vcvmoh328d46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfJEH7XNZNo1UfsQTCBIOmzpnlEEXAYNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328105423593-6shjs82acd8be9pc5a64vcvmoh328d46.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

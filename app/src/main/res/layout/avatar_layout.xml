@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+
+    android:clipToPadding="false"
+    android:clipToOutline="false"
+    android:clipChildren="false"
+    >
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardElevation="0dp"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="18dp"
+        android:paddingTop="8dp"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/avatar_selection_view_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/grey_100"
+            app:cardCornerRadius="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/avatar_selection_view"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:contentDescription="avatar Icon"
+                android:src="@drawable/av4" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/iv_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avatar_selection_view_card"
+            android:layout_gravity="center"
+            android:backgroundTint="@null"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:cardCornerRadius="200dp"
+            app:cardElevation="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/avatar_selection_view_card"
+            app:layout_constraintEnd_toEndOf="@+id/avatar_selection_view_card"
+            app:layout_constraintStart_toStartOf="@+id/avatar_selection_view_card"
+            app:layout_constraintTop_toBottomOf="@+id/avatar_selection_view_card">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/ic_check"
+                android:scaleX=".6"
+                android:scaleY=".6"
+
+                />
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
+
+
+
+</RelativeLayout>

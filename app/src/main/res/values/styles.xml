@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.AppTheme.TextInputLayoutList" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="fontFamily">@font/montserrat_italic</item>
+        <item name="hintTextAppearance">@style/TextLabel</item>
+        <item name="hintTextColor">@color/grey_500</item>
+        <item name="boxStrokeWidth">1.5dp</item>
+        <item name="boxCornerRadiusBottomEnd">100dp</item>
+        <item name="boxCornerRadiusBottomStart">100dp</item>
+        <item name="boxCornerRadiusTopEnd">100dp</item>
+        <item name="boxCornerRadiusTopStart">100dp</item>
+    </style>
+
+
+
+    <style name="TextLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+    </style>
+
+
+</resources>
