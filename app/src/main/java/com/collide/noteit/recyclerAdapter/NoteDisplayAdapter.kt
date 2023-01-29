@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.collide.noteit.R
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -39,19 +40,31 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
 
         if(note.image_URL != ""){
 
-            var data = note.image_URL!!.split("|")
-            var path_string = data[0]
-            Log.d("data",""+path_string)
+            var url = Uri.parse(note.image_URL)
 
-            storageRef.child(path_string)
-                .downloadUrl
-                .addOnSuccessListener {
-                    Glide.with(context)
-                        .load(it)
-                        .into(holder.imagebox)
 
-                    holder.imagebox.visibility = ImageView.VISIBLE
-                }
+            Glide.with(context)
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(holder.imagebox)
+            holder.imagebox.visibility = ImageView.VISIBLE
+
+//            var data = note.image_URL!!.split("|")
+//            var path_string = data[0]
+//            Log.d("data",""+path_string)
+//
+//            storageRef.child(path_string)
+//                .downloadUrl
+//                .addOnSuccessListener {
+//                    Glide.with(context)
+//                        .load(it)
+//                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+//                        .into(holder.imagebox)
+//
+//                    holder.imagebox.visibility = ImageView.VISIBLE
+//                }.addOnFailureListener {
+//
+//                }
         }
     }
 
