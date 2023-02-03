@@ -3,8 +3,11 @@ package com.collide.noteit
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -28,6 +31,8 @@ import com.google.firebase.storage.StorageReference
 import com.jsibbold.zoomage.ZoomageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import ozaydin.serkan.com.image_zoom_view.ImageViewZoom
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
@@ -38,11 +43,11 @@ class Note_Activity : AppCompatActivity() {
 
     lateinit var dialog: Dialog
 
-    val photos: ArrayList<Note_Image_Data_Model> = ArrayList<Note_Image_Data_Model>()
+    val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
     var note_id: String = ""
     var flag_image_uri = false
     var order_view_all = ""
-
+    var edit_text_data_all = ""
 
     private lateinit var firebaseFirestore: FirebaseFirestore
     var data_image: Intent? = null
@@ -86,14 +91,25 @@ class Note_Activity : AppCompatActivity() {
                 var layout_childs = layout.children
                 for(child in layout_childs){
                     if(child is EditText){
-                        order_view_all += "ET|"
+                        order_view_all += "ET||||"
+                        edit_text_data_all += child.text.toString()+"|"
+
                     }else if(child is FrameLayout ){
-                        order_view_all +="IV|"
+                        order_view_all +="IV||||"
                     }
 
                 }
-                order_view_all = order_view_all.substring(3..order_view_all.length-2)
-                Log.d("child", ""+order_view_all)
+                if(!order_view_all.equals("ET||||")){
+                    order_view_all = order_view_all.substring(6..order_view_all.length-5)
+                    Log.d("child", ""+order_view_all)
+                } else{
+                    order_view_all = order_view_all.substring(0..2)
+                }
+
+                edit_text_data_all = edit_text_data_all.substring(0..edit_text_data_all.length-5)
+
+
+
 
 
 //                if(!image_uri_list.isEmpty()){
@@ -104,7 +120,7 @@ class Note_Activity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().currentUser!!.uid)
                         .collection("Mynotes")
                         .document(note_id)
-                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, note_id))
+                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
                         .addOnSuccessListener {
                             Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
 
@@ -120,7 +136,8 @@ class Note_Activity : AppCompatActivity() {
                         }
 
 
-
+                val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                startActivity(intent)
 
 //
 //
@@ -196,7 +213,7 @@ class Note_Activity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().currentUser!!.uid)
                         .collection("Mynotes")
                         .document(note_id)
-                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, note_id))
+                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
 
                     flag_image_uri = true
                 }
@@ -224,8 +241,38 @@ class Note_Activity : AppCompatActivity() {
     var galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == Activity.RESULT_OK){
 
-            val photo = Note_Image_Data_Model(localUri = it.data!!.data.toString())
-            photos.add(photo)
+//            val photo = Note_Image_Data_Model(localUri = it.data!!.data.toString())
+//            photos.add(photo)
+            val bitmap:Bitmap
+            var bitmap_image: Bitmap
+            var imageView = ImageViewZoom(this)
+
+            if(Build.VERSION.SDK_INT < 28){
+
+                bitmap_image = MediaStore.Images.Media.getBitmap(
+                    this.contentResolver,
+                    it.data!!.data
+                )
+
+            }else{
+
+                    it.data!!.data?.let { it1 ->
+                        val source = ImageDecoder.createSource(this.contentResolver,
+                            it1
+                        )
+                         bitmap = ImageDecoder.decodeBitmap(source)
+                        imageView.setImageBitmap(bitmap)
+
+                        var bytearraystream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytearraystream)
+                        var base64 = android.util.Base64.encodeToString(bytearraystream.toByteArray(), android.util.Base64.NO_WRAP)
+
+                        Log.d("data", ""+base64.length)
+                        val photo = Note_Image_Data_Model(localUri = base64)
+                        photos.add(photo)
+                    }
+            }
+
 
             var options: BitmapFactory.Options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
@@ -235,13 +282,12 @@ class Note_Activity : AppCompatActivity() {
 
 
 //            var imageView = ImageView(this)
-            var imageView = ZoomageView(this)
             imageView.id = View.generateViewId()
             imageView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
 //            imageView.setImageResource(R.drawable.app_logo)
 //            Log.d("view", ""+data_image)
-            imageView.setImageURI(it.data!!.data)
+//            imageView.setImageURI(it.data!!.data)
             var EditText = EditText(this)
             EditText.id = View.generateViewId()
             EditText.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)

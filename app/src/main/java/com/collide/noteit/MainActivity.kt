@@ -138,6 +138,8 @@ class MainActivity : AppCompatActivity() {
         var optino:FirestoreRecyclerOptions<Note_Data_Model> = FirestoreRecyclerOptions.Builder<Note_Data_Model>()
             .setQuery(query, Note_Data_Model::class.java)
             .build()
+
+
         notedisplayadapter = NoteDisplayAdapter(optino, this)
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
         binding.recyclerView.adapter = notedisplayadapter
