@@ -5,16 +5,21 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.core.view.get
 import com.collide.noteit.dataClass.Note_Data_Model
@@ -34,6 +39,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import ozaydin.serkan.com.image_zoom_view.ImageViewZoom
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Note_Activity : AppCompatActivity() {
@@ -48,6 +54,8 @@ class Note_Activity : AppCompatActivity() {
     var flag_image_uri = false
     var order_view_all = ""
     var edit_text_data_all = ""
+    lateinit var spannableString: SpannableStringBuilder
+    lateinit var spannable_html: String
 
     private lateinit var firebaseFirestore: FirebaseFirestore
     var data_image: Intent? = null
@@ -71,98 +79,130 @@ class Note_Activity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firebaseFirestore =  Firebase.firestore
 
+        setCurrentDate()
+
         if(note_id == ""){
             note_id = UUID.randomUUID().toString()
         }
 
 
 
-        binding.fabImageAdd.setOnClickListener {
-
-            gallery_intent()
-
-        }
-
-
-        binding.saveBtn.setOnClickListener {
-            if (!binding.etTitle.equals("") && !binding.etDesc.equals("")){
-                var imageUri = ""
-                var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
-                var layout_childs = layout.children
-                for(child in layout_childs){
-                    if(child is EditText){
-                        order_view_all += "ET||||"
-                        edit_text_data_all += child.text.toString()+"|"
-
-                    }else if(child is FrameLayout ){
-                        order_view_all +="IV||||"
-                    }
-
-                }
-                if(!order_view_all.equals("ET||||")){
-                    order_view_all = order_view_all.substring(6..order_view_all.length-5)
-                    Log.d("child", ""+order_view_all)
-                } else{
-                    order_view_all = order_view_all.substring(0..2)
-                }
-
-                edit_text_data_all = edit_text_data_all.substring(0..edit_text_data_all.length-5)
-
-
-
-
-
-//                if(!image_uri_list.isEmpty()){
-
-                Log.d("child", ""+firebaseFirestore)
-
-                    firebaseFirestore.collection("Notes")
-                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        .collection("Mynotes")
-                        .document(note_id)
-                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
-                        .addOnSuccessListener {
-                            Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-
-                            if(photos.isNotEmpty()){
-                                uploadPhotos()
-                            }
-                            val intent = Intent(this@Note_Activity, MainActivity::class.java)
-                            startActivity(intent)
-
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
-                        }
-
-
-                val intent = Intent(this@Note_Activity, MainActivity::class.java)
-                startActivity(intent)
-
+//        binding.fabImageAdd.setOnClickListener {
 //
+//            gallery_intent()
 //
+//        }
+
+//        binding.fabTextColor.setOnClickListener {
+////            setColor()
+//        }
+
+//        binding.saveBtn.setOnClickListener {
+//            if (!binding.etTitle.equals("") && !binding.etDesc.equals("")){
+//                var imageUri = ""
+//                var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
+//                var layout_childs = layout.children
+//                for(child in layout_childs){
+//                    if(child is EditText){
+//                        order_view_all += "ET||||"
+//                        edit_text_data_all += child.text.toString()+"|"
+//
+//                    }else if(child is FrameLayout ){
+//                        order_view_all +="IV||||"
+//                    }
+//
+//                }
+//                if(!order_view_all.equals("ET||||")){
+//                    order_view_all = order_view_all.substring(6..order_view_all.length-5)
+//                    Log.d("child", ""+order_view_all)
 //                } else{
+//                    order_view_all = order_view_all.substring(0..2)
+//                }
+//
+//                edit_text_data_all = edit_text_data_all.substring(0..edit_text_data_all.length-5)
+//
+//
+//
+//
+//
+////                if(!image_uri_list.isEmpty()){
+//
+//                Log.d("child", ""+firebaseFirestore)
+//
 //                    firebaseFirestore.collection("Notes")
 //                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
 //                        .collection("Mynotes")
 //                        .document(note_id)
-//                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, note_id))
+//                        .set(Note_Data_Model(binding.etTitle.text.toString(), spannable_html, imageUri, order_view_all, edit_text_data_all, note_id))
 //                        .addOnSuccessListener {
 //                            Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
+//
+//                            if(photos.isNotEmpty()){
+//                                uploadPhotos()
+//                            }
+//                            val intent = Intent(this@Note_Activity, MainActivity::class.java)
+//                            startActivity(intent)
+//
 //                        }
 //                        .addOnFailureListener {
 //                            Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
 //                        }
-//                }
 //
-                Log.d("User", ""+image_name_list)
+//
+//                val intent = Intent(this@Note_Activity, MainActivity::class.java)
+//                startActivity(intent)
+//
+////
+////
+////                } else{
+////                    firebaseFirestore.collection("Notes")
+////                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
+////                        .collection("Mynotes")
+////                        .document(note_id)
+////                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, note_id))
+////                        .addOnSuccessListener {
+////                            Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
+////                        }
+////                        .addOnFailureListener {
+////                            Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
+////                        }
+////                }
+////
+//                Log.d("User", ""+image_name_list)
+//
+//
+//            }
+//
+//
+//        }
+
+    }
+
+    private fun setCurrentDate() {
+        var currentdate = Calendar.getInstance().time
+        var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
+        var formatedDate = DateFormat.format(currentdate)
+        binding.createdDate.text = formatedDate
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun setColor() {
+
+        spannableString = SpannableStringBuilder(binding.etDesc.text)
+        spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+            binding.etDesc.selectionStart,
+            binding.etDesc.selectionEnd,
+            0
+        )
+        spannableString.setSpan(android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+            binding.etDesc.selectionStart,
+            binding.etDesc.selectionEnd,
+            0
+        )
+        binding.etDesc.setText(spannableString)
 
 
-            }
-
-
-        }
-
+        spannable_html = Html.toHtml(spannableString, Html.FROM_HTML_MODE_COMPACT)
     }
 
     private fun uploadPhotos() {

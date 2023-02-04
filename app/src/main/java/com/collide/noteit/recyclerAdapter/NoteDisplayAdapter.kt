@@ -4,6 +4,8 @@ import android.content.Context
 import android.media.Image
 import android.net.Uri
 import android.opengl.Visibility
+import android.os.Build
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -30,13 +33,14 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
     var dataList = mutableListOf<Note_Data_Model>()
     val storageRef = FirebaseStorage.getInstance().reference
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(
         holder: viewAdapter,
         position: Int,
         note: Note_Data_Model
     ) {
         holder.title.text = note.title
-        holder.des.text = note.des
+        holder.des.text = Html.fromHtml(note.des,   Html.FROM_HTML_MODE_COMPACT)
 
         if(note.image_URL != ""){
 

@@ -6,52 +6,137 @@
     android:layout_height="match_parent"
     tools:context=".Note_Activity"
     android:id="@+id/const_layout"
-    android:padding="10dp">
+    android:clipToPadding="false"
+    android:paddingEnd="25dp"
+    android:paddingStart="25dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    >
+
+    <ImageView
+        android:id="@+id/back_btn_main"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_round_left_arrow"
+        android:backgroundTint="@color/black_100"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="-20dp"/>
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
+        app:layout_constraintTop_toBottomOf="@+id/back_btn_main"
+        >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/save_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="true">
 
             <EditText
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textShortMessage"
-                android:text="title"
+                android:inputType="textVisiblePassword"
+                android:text=""
+                android:hint="Title"
+                android:backgroundTintMode="src_over"
+                android:background="@null"
+                android:textSize="36sp"
+                android:fontFamily="@font/montserrat_bold"
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/edittext_title_cursor_height"
+                android:maxLength="17"
+                android:textColorHint="@color/black_300"
+
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/save_btn" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+
+                android:id="@+id/created_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                android:fontFamily="@font/montserrat_medium_italic"
+                android:text="Wed, Jul 4, '2022"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_title"
+
+                />
+
+            <TextView
+                android:id="@+id/note_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Document"
+                android:background="@drawable/note_rounded_box"
+                android:backgroundTint="@color/blue_100"
+                android:textColor="@color/white"
+                android:textSize="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:paddingStart="17dp"
+                android:paddingEnd="17dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/created_date"
+                android:layout_marginTop="3dp"
+                />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/image_view_note_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/note_color"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:cardElevation="0dp"
+                android:clipToPadding="true"
+                app:cardCornerRadius="9dp"
+                android:layout_marginTop="10dp"
+                >
+                <ImageView
+                    android:id="@+id/image_view_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:src="@drawable/test_image"
+                    android:adjustViewBounds="true"
+                    />
+            </androidx.cardview.widget.CardView>
+
 
             <LinearLayout
                 android:id="@+id/layout_linear_adder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginTop="10dp"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_title">
+                app:layout_constraintTop_toBottomOf="@id/image_view_note_parent">
 
                 <EditText
                     android:id="@+id/et_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:text="desc" />
+                    android:inputType="textMultiLine|textVisiblePassword"
+                    android:hint="Desc"
+                    android:textColorHint="@color/black_300"
+                    android:backgroundTintMode="src_over"
+                    android:background="@null"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="18dp"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:paddingBottom="100dp"
+                    />
 
             </LinearLayout>
 
@@ -61,22 +146,99 @@
 
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_image_add"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_rounded_plus4"
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/rounded_options_black"
+        android:paddingStart="20dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_text_color"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_rounded_plus4"
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_semibold_italic"
+                android:text="Montserrat"
+                android:textColor="@color/white"
+                android:textSize="12dp" />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/rounded_bottom_arrow_note" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/selection_bold"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/rounded_bold_icon"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="B"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/selection_italic"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/rounded_bold_icon"
+            android:fontFamily="@font/neuton_italic"
+            android:gravity="center"
+            android:text="I"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/selection_bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/selection_color"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/little_rounded_color_lense"
+            android:fontFamily="@font/neuton_italic"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/selection_italic"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

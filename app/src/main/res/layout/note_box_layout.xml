@@ -132,7 +132,7 @@
                 <ImageView
                     android:id="@+id/imagecard"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/back_img_test"
                     app:layout_constraintBottom_toBottomOf="parent"
