@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.*
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -80,6 +82,23 @@ class Note_Activity : AppCompatActivity() {
         firebaseFirestore =  Firebase.firestore
 
         setCurrentDate()
+
+        binding.selectionImage.setOnClickListener {
+            gallery_intent()
+        }
+        binding.imageViewNote.setOnLongClickListener {
+            var inanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popup_delete_btn_image_note)
+            binding.imageDeleteNote.startAnimation(inanim)
+            var outanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popdown_delete_btn_image_note)
+            binding.imageDeleteNote.startAnimation(outanim)
+            return@setOnLongClickListener true
+        }
+        binding.imageDeleteNote.setOnClickListener {
+            binding.imageDeleteNote.visibility = ViewGroup.GONE
+            binding.imageViewNote.visibility = ViewGroup.GONE
+            photos.clear()
+            Log.d("hold", ""+photos)
+        }
 
         if(note_id == ""){
             note_id = UUID.randomUUID().toString()
@@ -205,71 +224,71 @@ class Note_Activity : AppCompatActivity() {
         spannable_html = Html.toHtml(spannableString, Html.FROM_HTML_MODE_COMPACT)
     }
 
-    private fun uploadPhotos() {
-        photos.forEach{
-            photo ->
-            var uri = Uri.parse(photo.localUri)
-            val imageRef = storageReference.child("images/${auth.currentUser!!.uid}/${uri.lastPathSegment}")
-            val uploadTask = imageRef.putFile(uri)
-            uploadTask.addOnSuccessListener {
-                Log.i("upload-task", "Image Uploaded $imageRef")
-                val downloadUrl = imageRef.downloadUrl
-                downloadUrl.addOnSuccessListener {
-                    remoteUri ->
-                    photo.remoteUri = remoteUri.toString()
-                    updatePhotoDatabase(photo)
-                }
-            }
-            uploadTask.addOnFailureListener {
-                Log.e("upload-task", it.message ?: "No Message")
-            }
+//    private fun uploadPhotos() {
+//        photos.forEach{
+//            photo ->
+//            var uri = Uri.parse(photo.localUri)
+//            val imageRef = storageReference.child("images/${auth.currentUser!!.uid}/${uri.lastPathSegment}")
+//            val uploadTask = imageRef.putFile(uri)
+//            uploadTask.addOnSuccessListener {
+//                Log.i("upload-task", "Image Uploaded $imageRef")
+//                val downloadUrl = imageRef.downloadUrl
+//                downloadUrl.addOnSuccessListener {
+//                    remoteUri ->
+//                    photo.remoteUri = remoteUri.toString()
+//                    updatePhotoDatabase(photo)
+//                }
+//            }
+//            uploadTask.addOnFailureListener {
+//                Log.e("upload-task", it.message ?: "No Message")
+//            }
+//
+//        }
+//    }
 
-        }
-    }
-
-    private fun updatePhotoDatabase(photo: Note_Image_Data_Model) {
-
-        var photoCollection = firebaseFirestore.collection("Notes")
-                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
-                                    .collection("Mynotes")
-                                    .document(note_id)
-                                    .collection("photos")
-        var handle = photoCollection.add(photo)
-        handle.addOnSuccessListener {
-            Log.i("upload-task", "Successfully updated phto medtadata")
-            photo.id = it.id
-            var updateCollection = firebaseFirestore.collection("Notes")
-                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
-                                    .collection("Mynotes")
-                                    .document(note_id)
-                                    .collection("photos")
-                                    .document(photo.id)
-                                    .set(photo)
-
-            updateCollection.addOnSuccessListener {
-                if(flag_image_uri == false){
-                    imageUri = photo.remoteUri
-                    firebaseFirestore.collection("Notes")
-                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        .collection("Mynotes")
-                        .document(note_id)
-                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
-
-                    flag_image_uri = true
-                }
-            }
-            updateCollection.addOnFailureListener {
-                Log.e("upload-task", "Error Updating photo data: ${it.message} ")
-
-            }
-
-        }
-        handle.addOnFailureListener {
-            Log.e("upload-task", "Error Updating photo data: ${it.message} ")
-        }
-
-
-    }
+//    private fun updatePhotoDatabase(photo: Note_Image_Data_Model) {
+//
+//        var photoCollection = firebaseFirestore.collection("Notes")
+//                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                                    .collection("Mynotes")
+//                                    .document(note_id)
+//                                    .collection("photos")
+//        var handle = photoCollection.add(photo)
+//        handle.addOnSuccessListener {
+//            Log.i("upload-task", "Successfully updated phto medtadata")
+//            photo.id = it.id
+//            var updateCollection = firebaseFirestore.collection("Notes")
+//                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                                    .collection("Mynotes")
+//                                    .document(note_id)
+//                                    .collection("photos")
+//                                    .document(photo.id)
+//                                    .set(photo)
+//
+//            updateCollection.addOnSuccessListener {
+//                if(flag_image_uri == false){
+//                    imageUri = photo.remoteUri
+//                    firebaseFirestore.collection("Notes")
+//                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                        .collection("Mynotes")
+//                        .document(note_id)
+//                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
+//
+//                    flag_image_uri = true
+//                }
+//            }
+//            updateCollection.addOnFailureListener {
+//                Log.e("upload-task", "Error Updating photo data: ${it.message} ")
+//
+//            }
+//
+//        }
+//        handle.addOnFailureListener {
+//            Log.e("upload-task", "Error Updating photo data: ${it.message} ")
+//        }
+//
+//
+//    }
 
     private fun gallery_intent() {
         var intent = Intent(Intent.ACTION_PICK)
@@ -280,141 +299,13 @@ class Note_Activity : AppCompatActivity() {
 
     var galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == Activity.RESULT_OK){
+            binding.imageViewNote.visibility = ViewGroup.VISIBLE
+            binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
 
-//            val photo = Note_Image_Data_Model(localUri = it.data!!.data.toString())
-//            photos.add(photo)
-            val bitmap:Bitmap
-            var bitmap_image: Bitmap
-            var imageView = ImageViewZoom(this)
-
-            if(Build.VERSION.SDK_INT < 28){
-
-                bitmap_image = MediaStore.Images.Media.getBitmap(
-                    this.contentResolver,
-                    it.data!!.data
-                )
-
-            }else{
-
-                    it.data!!.data?.let { it1 ->
-                        val source = ImageDecoder.createSource(this.contentResolver,
-                            it1
-                        )
-                         bitmap = ImageDecoder.decodeBitmap(source)
-                        imageView.setImageBitmap(bitmap)
-
-                        var bytearraystream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytearraystream)
-                        var base64 = android.util.Base64.encodeToString(bytearraystream.toByteArray(), android.util.Base64.NO_WRAP)
-
-                        Log.d("data", ""+base64.length)
-                        val photo = Note_Image_Data_Model(localUri = base64)
-                        photos.add(photo)
-                    }
-            }
-
-
-            var options: BitmapFactory.Options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            BitmapFactory.decodeFile(File(it.data!!.data!!.path).absolutePath, options)
-            var imgHeight = options.outHeight
-            var imgWidth = options.outWidth
-
-
-//            var imageView = ImageView(this)
-            imageView.id = View.generateViewId()
-            imageView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-//            imageView.setImageResource(R.drawable.app_logo)
-//            Log.d("view", ""+data_image)
-//            imageView.setImageURI(it.data!!.data)
-            var EditText = EditText(this)
-            EditText.id = View.generateViewId()
-            EditText.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            EditText.setText("text")
-
-            var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
-
-            var view = layout.focusedChild
-
-            var frameLayout = FrameLayout(this)
-            frameLayout.id = View.generateViewId()
-            frameLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300)
-
-            var uid = auth.currentUser!!.uid
-            var filename = uid+"/"+UUID.randomUUID().toString()
-            image_name_list.add(filename)
-
-            Log.d("User",""+image_name_list)
-
-
-
-            imageView.setOnLongClickListener {
-                imgview->
-                var parent: ViewGroup = imgview.parent as ViewGroup
-                var btn_delete = Button(this)
-                btn_delete.id = View.generateViewId()
-                btn_delete.layoutParams = ViewGroup.LayoutParams(50, 50)
-
-
-                parent.addView(btn_delete)
-                btn_delete.gravity = Gravity.BOTTOM or Gravity.START
-
-                btn_delete.setOnClickListener {
-                    Toast.makeText(this, ""+btn_delete.gravity, Toast.LENGTH_SHORT).show()
-
-                    parent.removeView(imageView)
-                    var grandparent: ViewGroup = parent.parent as ViewGroup
-                    var index_parent = grandparent.indexOfChild(parent)
-
-
-//                    Toast.makeText(this,""+(view_iterator is EditText), Toast.LENGTH_SHORT).show()
-
-                    if(grandparent.getChildAt(index_parent +1) is EditText){
-                        var et: EditText = grandparent.getChildAt(index_parent +1) as EditText
-                        var text_et = et.text
-
-                        var store_et: EditText = findEt(grandparent, index_parent)
-                        store_et.setText(store_et.text.toString() + "\n" +text_et)
-                        grandparent.removeView(et)
-                    }
-                    grandparent.removeView(parent)
-                }
-
-                return@setOnLongClickListener true
-            }
-
-            frameLayout.addView(imageView)
-
-            if(view is EditText){
-
-
-                var currentindex = view.selectionStart
-                var enteredtext = view.text.toString()
-                var endtext = enteredtext.subSequence(currentindex, enteredtext.length)
-                var startext = enteredtext.subSequence(0, currentindex)
-
-                var childindex = layout.indexOfChild(view)
-                view.setText(startext)
-                EditText.setText(endtext)
-                current_imageView = imageView
-                current_editetxt = EditText
-                image_uri_list.add(it.data!!.data.toString())
-
-                layout.addView(frameLayout, childindex + 1)
-                layout.addView(EditText, childindex + 2)
-                parent_layout = layout
-            }else{
-                image_uri_list.add(it.data!!.data.toString())
-                current_imageView = imageView
-                layout.addView(frameLayout)
-                layout.addView(EditText)
-                var views = layout.children
-                for(view in views){
-                    Log.d("view", ""+view)
-                }
-
-            }
+            var uri = it.data!!.data
+            val photo = Note_Image_Data_Model(path = "images/${auth.currentUser!!.uid}/${uri!!.lastPathSegment}" ,localUri = it.data!!.data.toString())
+            photos.add(photo)
+            binding.imageViewNote.setImageURI(uri)
 
         }
     }
