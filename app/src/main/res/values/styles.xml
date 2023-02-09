@@ -23,4 +23,9 @@
     </style>
 
 
+    <style name="Note_EditText_parent" parent="Widget.AppCompat.EditText">
+        <item name="android:inputType">textMultiLine|textVisiblePassword</item>
+    </style>
+
+
 </resources>

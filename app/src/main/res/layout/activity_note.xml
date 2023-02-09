@@ -25,15 +25,16 @@
 
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/back_btn_main"
+        app:layout_constraintBottom_toBottomOf="parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:nestedScrollingEnabled="true">
 
             <EditText
@@ -166,6 +167,12 @@
                     />
 
             </LinearLayout>
+<!--            <com.collide.noteit.customView.ETCheckbox-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/layout_linear_adder"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"/>-->
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -184,6 +191,7 @@
         android:paddingTop="15dp"
         android:paddingEnd="20dp"
         android:paddingBottom="15dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -275,6 +283,21 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/selection_color"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/add_task"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/little_rounded_task_add"
+            android:fontFamily="@font/neuton_italic"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/selection_image"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.opengl.Visibility
 import android.os.Build
@@ -14,16 +15,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Html
+import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.*
+import android.widget.LinearLayout.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.get
+import androidx.core.view.marginLeft
+import androidx.core.view.setMargins
+import com.collide.noteit.customView.ETCheckbox
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
@@ -100,6 +109,10 @@ class Note_Activity : AppCompatActivity() {
             Log.d("hold", ""+photos)
         }
 
+        binding.addTask.setOnClickListener {
+            createTask()
+        }
+
         if(note_id == ""){
             note_id = UUID.randomUUID().toString()
         }
@@ -112,9 +125,9 @@ class Note_Activity : AppCompatActivity() {
 //
 //        }
 
-//        binding.fabTextColor.setOnClickListener {
-////            setColor()
-//        }
+        binding.selectionColor.setOnClickListener {
+            setColor()
+        }
 
 //        binding.saveBtn.setOnClickListener {
 //            if (!binding.etTitle.equals("") && !binding.etDesc.equals("")){
@@ -195,6 +208,84 @@ class Note_Activity : AppCompatActivity() {
 //
 //        }
 
+    }
+
+    private fun createTask() {
+        val linearLayoutBox = LinearLayout(this)
+        linearLayoutBox.orientation = LinearLayout.VERTICAL
+        linearLayoutBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        linearLayoutBox.id = View.generateViewId()
+        linearLayoutBox.gravity = Gravity.CENTER
+
+        val ETbox = ETCheckbox(this, attrs = null)
+        ETbox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        ETbox.id = View.generateViewId()
+
+
+
+        val ET = EditText(ContextThemeWrapper(this, R.style.Note_EditText_parent))
+
+        ET.layoutParams= ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        ET.id = View.generateViewId()
+        ET.textSize = 18f
+        ET.textCursorDrawable = ContextCompat.getDrawable(this, R.drawable.cursor)
+        ET.backgroundTintMode = PorterDuff.Mode.SRC_OVER
+        ET.background = null
+        ET.typeface = ResourcesCompat.getFont(this, R.font.montserrat)
+
+        Toast.makeText(this,""+(binding.layoutLinearAdder.focusedChild is AppCompatEditText),Toast.LENGTH_LONG).show()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+                binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            var index_et = binding.layoutLinearAdder.indexOfChild(binding.layoutLinearAdder.focusedChild)
+            var current_et = binding.layoutLinearAdder.getChildAt(index_et) as EditText
+            if(binding.layoutLinearAdder.getChildAt(index_et-1) is LinearLayout && current_et.text.isEmpty()){
+                var child = binding.layoutLinearAdder.getChildAt(index_et-1) as LinearLayout
+                Log.d("index","negative index")
+                if(child.getChildAt(0) is ETCheckbox){
+                    var childschildid = child.getChildAt(0).id
+                    var childchlid = findViewById<ETCheckbox>(childschildid)
+                    if(childchlid.getDataEditText()){
+                        child.addView(ETbox)
+                    }
+                }
+            }else{
+                if(binding.layoutLinearAdder.getChildAt(index_et+1) is LinearLayout){
+                    var child = binding.layoutLinearAdder.getChildAt(index_et+1) as LinearLayout
+                    Log.d("index","positive index")
+                    if(child.getChildAt(0) is ETCheckbox){
+                        var childschildid = child.getChildAt(0).id
+                        var childchlid = findViewById<ETCheckbox>(childschildid)
+                        if(childchlid.getDataEditText()){
+                            child.addView(ETbox)
+                        }
+                    }
+                } else{
+                    linearLayoutBox.addView(ETbox)
+                    binding.layoutLinearAdder.addView(linearLayoutBox, index_et + 1)
+                    if(binding.layoutLinearAdder.getChildAt(index_et+2) !is EditText){
+                        current_et.setPadding(0,0,0,0)
+
+                        ET.setPadding(0,0,0, 200)
+                        binding.layoutLinearAdder.addView(ET)
+                    }
+
+                }
+            }
+
+
+        } else{
+            linearLayoutBox.addView(ETbox)
+            var childcout = binding.layoutLinearAdder.childCount
+            if(binding.layoutLinearAdder.getChildAt(childcout-1) is EditText){
+                var child = binding.layoutLinearAdder.getChildAt(childcout -1)
+                child.setPadding(0,0,0,0)
+            }
+            binding.layoutLinearAdder.addView(linearLayoutBox)
+            ET.setPadding(0,0,0, 200)
+            binding.layoutLinearAdder.addView(ET)
+
+        }
     }
 
     private fun setCurrentDate() {
@@ -301,7 +392,8 @@ class Note_Activity : AppCompatActivity() {
         if(it.resultCode == Activity.RESULT_OK){
             binding.imageViewNote.visibility = ViewGroup.VISIBLE
             binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
-
+            var outanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popdown_delete_btn_image_note)
+            binding.imageDeleteNote.startAnimation(outanim)
             var uri = it.data!!.data
             val photo = Note_Image_Data_Model(path = "images/${auth.currentUser!!.uid}/${uri!!.lastPathSegment}" ,localUri = it.data!!.data.toString())
             photos.add(photo)
