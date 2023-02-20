@@ -375,7 +375,6 @@ class Note_Activity : AppCompatActivity() {
         Log.d("Data-note","3: "+binding.layoutLinearAdder.getChildAt(3))
         Log.d("Data-note","4: "+binding.layoutLinearAdder.getChildAt(4))
 
-
 //        var childs = binding.layoutLinearAdder.children
 //        for(child in childs){
 //            Log.d("Data-note",""+child)
