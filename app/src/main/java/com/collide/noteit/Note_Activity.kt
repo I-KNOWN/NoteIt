@@ -2,54 +2,49 @@ package com.collide.noteit
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.ImageDecoder
 import android.graphics.PorterDuff
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.media.Image
+import android.net.ConnectivityManager
 import android.net.Uri
-import android.opengl.Visibility
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Html
-import android.text.InputType
-import android.text.SpannableStringBuilder
+import android.text.*
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import android.widget.LinearLayout.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
-import androidx.core.view.get
-import androidx.core.view.marginLeft
-import androidx.core.view.setMargins
+import androidx.core.view.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.collide.noteit.customView.ETCheckbox
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.jsibbold.zoomage.ZoomageView
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import ozaydin.serkan.com.image_zoom_view.ImageViewZoom
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,13 +54,21 @@ class Note_Activity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     lateinit var dialog: Dialog
+    lateinit var dialog_style: Dialog
+    lateinit var dialog_color: Dialog
+
+    companion object{
+        lateinit var instance: Note_Activity
+    }
 
     val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
     var note_id: String = ""
     var flag_image_uri = false
     var order_view_all = ""
     var edit_text_data_all = ""
-    lateinit var spannableString: SpannableStringBuilder
+    var task_data_all = ""
+    var desc = ""
+    lateinit var spannableString: Spannable
     lateinit var spannable_html: String
 
     private lateinit var firebaseFirestore: FirebaseFirestore
@@ -86,15 +89,18 @@ class Note_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityNoteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        instance = this
+
 //        var notedisplayadapter = NoteDisplayAdapter(applicationContext)
         auth = FirebaseAuth.getInstance()
         firebaseFirestore =  Firebase.firestore
 
         setCurrentDate()
 
-        binding.selectionImage.setOnClickListener {
-            gallery_intent()
-        }
+//        binding.selectionImage.setOnClickListener {
+//            gallery_intent()
+//        }
         binding.imageViewNote.setOnLongClickListener {
             var inanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popup_delete_btn_image_note)
             binding.imageDeleteNote.startAnimation(inanim)
@@ -105,29 +111,75 @@ class Note_Activity : AppCompatActivity() {
         binding.imageDeleteNote.setOnClickListener {
             binding.imageDeleteNote.visibility = ViewGroup.GONE
             binding.imageViewNote.visibility = ViewGroup.GONE
+            binding.parentofparent.visibility = ViewGroup.INVISIBLE
+            imageUri = ""
+
+
+            val parmas = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            parmas.setMargins(0,0,0,0)
+            var ll = findViewById<LinearLayout>(R.id.layout_linear_adder)
+            ll.layoutParams = parmas
+
+            ll.setPadding(0, 0, 0, 0)
+
+
             photos.clear()
             Log.d("hold", ""+photos)
         }
-
         binding.addTask.setOnClickListener {
             createTask()
         }
-
         if(note_id == ""){
             note_id = UUID.randomUUID().toString()
         }
 
-
-
-//        binding.fabImageAdd.setOnClickListener {
-//
-//            gallery_intent()
-//
-//        }
-
-        binding.selectionColor.setOnClickListener {
-            setColor()
+        binding.selectionStyle.setOnClickListener {
+            showDialogStyle()
         }
+        binding.noteColorBtn.setOnClickListener {
+            showDialogColor()
+        }
+
+//        binding.selectionColor.setOnClickListener {
+//            Log.d("spannable","html: "+SpannableStringBuilder(binding.etDesc.text.toString()).getSpanStart(StyleSpan::class.java))
+//            setColor()
+//        }
+//        binding.selectionBold.setOnClickListener {
+//            Log.d("spannable","html: "+SpannableStringBuilder(binding.etDesc.text.toString()))
+//
+//            setBold()
+//        }
+//        binding.selectionItalic.setOnClickListener {
+//            Log.d("spannable","html: "+SpannableStringBuilder(binding.etDesc.text.toString()))
+//
+//            setItalic()
+//        }
+        binding.backBtnMain.setOnClickListener {
+            saveNote()
+        }
+
+
+//        binding.etDesc.addTextChangedListener(object: TextWatcher{
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                return
+//            }
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//
+//
+//                var spannablestring = Html.fromHtml(styledText(p0), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE)
+//                Log.d("StyledText",""+spannablestring)
+//                binding.etDesc.setText(spannablestring)
+//
+//
+//            }
+//
+//            override fun afterTextChanged(p0: Editable?) {
+//                return
+//            }
+//
+//        })
+
 
 //        binding.saveBtn.setOnClickListener {
 //            if (!binding.etTitle.equals("") && !binding.etDesc.equals("")){
@@ -208,60 +260,491 @@ class Note_Activity : AppCompatActivity() {
 //
 //        }
 
+
+
+
     }
 
-    private fun createTask() {
-        val linearLayoutBox = LinearLayout(this)
+    private fun showDialogStyle() {
+        dialog_style = Dialog(this)
+        dialog_style.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog_style.setContentView(R.layout.bottom_sheet_layout_dialog)
+
+        var add_image = dialog_style.findViewById<LinearLayout>(R.id.Layout_add_image)
+        add_image.setOnClickListener {
+            gallery_intent()
+        }
+
+        var select_bold = dialog_style.findViewById<AppCompatButton>(R.id.btn_Bold)
+        select_bold.setOnClickListener {
+            setBold()
+        }
+
+        var select_italic = dialog_style.findViewById<AppCompatButton>(R.id.btn_italic)
+        select_italic.setOnClickListener {
+            setItalic()
+        }
+
+        var select_underline = dialog_style.findViewById<AppCompatButton>(R.id.btn_underline)
+        select_underline.setOnClickListener {
+            setUnderline()
+        }
+
+        var btn_red = dialog_style.findViewById<ImageView>(R.id.red_btn)
+        btn_red.setOnClickListener {
+            setColor_red()
+        }
+
+        var btn_blue = dialog_style.findViewById<ImageView>(R.id.blue_btn)
+        btn_blue.setOnClickListener {
+            setColor_blue()
+        }
+
+        var btn_cyan = dialog_style.findViewById<ImageView>(R.id.cyan_btn)
+        btn_cyan.setOnClickListener {
+            setColor_cyan()
+        }
+
+        dialog_style.show()
+        dialog_style.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog_style.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog_style.window!!.attributes.windowAnimations = R.style.DialogAnimationStyle
+        dialog_style.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun showDialogColor(){
+        dialog_color = Dialog(this)
+        dialog_color.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog_color.setContentView(R.layout.bottom_sheet_layout_dialog_color_note)
+
+        var btn_red = dialog_color.findViewById<ImageView>(R.id.red_btn)
+        btn_red.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
+            dialog_color.cancel()
+        }
+
+        var btn_blue = dialog_color.findViewById<ImageView>(R.id.blue_btn)
+        btn_blue.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_blue)
+            dialog_color.cancel()
+        }
+
+
+        dialog_color.show()
+        dialog_color.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog_color.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog_color.window!!.attributes.windowAnimations = R.style.DialogAnimationStyle
+        dialog_color.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun styledText(p0: CharSequence?): String {
+        val newString = StringBuilder()
+        val stack = Stack<Pair<Int, Char>>()
+
+        for(c in p0!!.indices){
+            if(p0[c].equals('*')){
+                Log.d("StyledText","inside: "+newString)
+                if(stack.isNotEmpty() && stack.peek().second == '*'){
+                    val top = stack.pop()
+                    val startIndex = top.first
+                    newString.setRange(startIndex, startIndex+1,"<b>")
+                    newString.append("</b>")
+                }else{
+                    stack.push(Pair(newString.length, '*'))
+                    newString.append(p0[c])
+                }
+            } else{
+                newString.append(p0[c])
+            }
+        }
+        return newString.toString()
+    }
+
+    private fun saveNote() {
+
+        Log.d("Here","inside")
+        if (binding.etTitle.text.isNotEmpty() && binding.etDesc.text.isNotEmpty()) {
+            Log.d("Here","inside")
+            var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
+            var layout_childs = layout.children
+            Log.d("Here",""+layout)
+            for (child in layout_childs) {
+                if (child is EditText) {
+                    order_view_all += "ET||||"
+
+                    var edittext_child_data = child.text
+
+                    spannable_html = Html.toHtml(edittext_child_data, Html.FROM_HTML_MODE_COMPACT)
+
+                    Log.d("Data","span html: "+ spannable_html)
+
+                    edit_text_data_all += "$spannable_html|&@!~~~|"
+                } else if (child is LinearLayout) {
+                    order_view_all += "LL||||"
+                    var LiLayout = child as LinearLayout
+                    var LiLayout_childs = LiLayout.children
+                    for (parent_child in LiLayout_childs) {
+                        if (parent_child is ETCheckbox) {
+                            order_view_all += "EC||||"
+                            var ETCheckbox_data = parent_child.getDataETtext()
+                            task_data_all += "$ETCheckbox_data|&@!~~~|"
+                        }
+                    }
+
+                }
+            }
+            order_view_all = order_view_all.substring(0, order_view_all.length - 4)
+            edit_text_data_all = edit_text_data_all.substring(0, edit_text_data_all.length - 8)
+            if(task_data_all.isNotEmpty()){
+                task_data_all = task_data_all.substring(0, task_data_all.length - 8)
+
+            }
+
+            Log.d("Data","Here is the data")
+
+            firebaseFirestore.collection("Notes")
+                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .collection("Mynotes")
+                .document(note_id)
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                .addOnSuccessListener {
+                    Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
+
+                    if(imageUri.isNotEmpty()){
+                        uploadPhotos(desc)
+                    }
+                    val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                    startActivity(intent)
+
+                }
+                .addOnFailureListener {
+                    Log.d("Data","Exception Firebase: "+it.message)
+                    Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
+                }
+
+
+
+        } else if (binding.etTitle.text.isEmpty() && binding.etDesc.text.isNotEmpty()) {
+            Log.d("Here","inside")
+            var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
+            var layout_childs = layout.children
+            Log.d("Here",""+layout)
+            for (child in layout_childs) {
+                if (child is EditText) {
+                    order_view_all += "ET||||"
+
+                    var edittext_child_data = child.text
+
+                    spannable_html = Html.toHtml(edittext_child_data, Html.FROM_HTML_MODE_COMPACT)
+
+                    Log.d("Data","span html: "+ spannable_html)
+
+                    edit_text_data_all += "$spannable_html|&@!~~~|"
+                } else if (child is LinearLayout) {
+                    order_view_all += "LL||||"
+                    var LiLayout = child as LinearLayout
+                    var LiLayout_childs = LiLayout.children
+                    for (parent_child in LiLayout_childs) {
+                        if (parent_child is ETCheckbox) {
+                            order_view_all += "EC||||"
+                            var ETCheckbox_data = parent_child.getDataETtext()
+                            task_data_all += "$ETCheckbox_data|&@!~~~|"
+                        }
+                    }
+
+                }
+            }
+            order_view_all = order_view_all.substring(0, order_view_all.length - 4)
+            edit_text_data_all = edit_text_data_all.substring(0, edit_text_data_all.length - 8)
+            if(task_data_all.isNotEmpty()){
+                task_data_all = task_data_all.substring(0, task_data_all.length - 8)
+
+            }
+
+            desc = binding.etDesc.text.toString()
+            var desc_length = desc.length
+            if(desc_length >= 6){
+                desc = desc.substring(0..6)+"..."
+            } else if(desc_length >= 5){
+                desc = desc.substring(0..5)+"..."
+            } else if(desc_length >= 4){
+                desc = desc.substring(0..4)+"..."
+            } else if(desc_length >= 3){
+                desc = desc.substring(0..3)+"..."
+            } else if(desc_length >= 2){
+                desc = desc.substring(0..2)+"..."
+            } else if(desc_length >= 1){
+                desc = desc.substring(0..1)+"..."
+            }
+
+            Log.d("Data","Here is the data")
+
+                        firebaseFirestore.collection("Notes")
+                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .collection("Mynotes")
+                        .document(note_id)
+                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                        .addOnSuccessListener {
+                            Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
+
+                            if(imageUri.isNotEmpty()){
+                                uploadPhotos(desc)
+                            }
+                            val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                            startActivity(intent)
+
+                        }
+                        .addOnFailureListener {
+                            Log.d("Data","Exception Firebase: "+it.message)
+                            Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
+                        }
+
+
+
+        }
+//        Log.d("Data","Order: "+order_view_all)
+//        Log.d("Data","ET Data: "+edit_text_data_all)
+//        Log.d("Data","ETCheckbox Data: "+task_data_all.split("|&@!~~~|"))
+    }
+
+    private fun setUnderline() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(UnderlineSpan(),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(UnderlineSpan(),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun setItalic() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(StyleSpan(Typeface.ITALIC),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(StyleSpan(Typeface.ITALIC),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun setBold() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(StyleSpan(Typeface.BOLD),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(StyleSpan(Typeface.BOLD),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    fun createTask() {
+        val linearLayoutBox = LinearLayout(instance)
         linearLayoutBox.orientation = LinearLayout.VERTICAL
         linearLayoutBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         linearLayoutBox.id = View.generateViewId()
         linearLayoutBox.gravity = Gravity.CENTER
 
-        val ETbox = ETCheckbox(this, attrs = null)
+        val deletebtn = ImageView(instance)
+        deletebtn.setBackgroundResource(R.drawable.ic_delete)
+        deletebtn.layoutParams = ViewGroup.LayoutParams(33, 26)
+
+
+
+        val ETbox = ETCheckbox(instance, attrs = null)
         ETbox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         ETbox.id = View.generateViewId()
 
+        var params_tv = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        params_tv.setMargins(15,0,0,0)
+//        var params_plus = LinearLayout.LayoutParams(20, 20)
+//        params_plus.setMargins(10,0,0,0)
 
+        var taskAddBox = LinearLayout(instance)
+        taskAddBox.orientation = LinearLayout.HORIZONTAL
+        taskAddBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        taskAddBox.id = View.generateViewId()
+        taskAddBox.gravity = Gravity.CENTER_VERTICAL
+        taskAddBox.setPadding(57,0,0,0)
 
-        val ET = EditText(ContextThemeWrapper(this, R.style.Note_EditText_parent))
+        var imageView_plus = ImageView(instance)
+        imageView_plus.setBackgroundResource(R.drawable.ic_rounded_plus_grey)
+//        imageView_plus.setImageResource(R.drawable.ic_rounded_plus_grey)
+        imageView_plus.layoutParams = ViewGroup.LayoutParams(45,45)
+        imageView_plus.id = View.generateViewId()
+
+        var TextView_add = TextView(instance)
+        TextView_add.setText("Add Task")
+
+        TextView_add.layoutParams = params_tv
+        TextView_add.id = View.generateViewId()
+        TextView_add.setTypeface(ResourcesCompat.getFont(instance, R.font.montserrat_semibold))
+        TextView_add.textSize = 15F
+        TextView_add.setTextColor(ContextCompat.getColor(instance, R.color.grey_400))
+
+        taskAddBox.addView(imageView_plus)
+        taskAddBox.addView(TextView_add)
+
+        taskAddBox.alpha = 0.3f
+
+        taskAddBox.setOnClickListener {
+            createTask()
+            taskAddBox.alpha = 0.3f
+        }
+
+//        val LayoutETbox = ConstraintLayout(this)
+//        LayoutETbox.id = View.generateViewId()
+//        val constraintSet = ConstraintSet()
+//        constraintSet.clone(LayoutETbox)
+//        constraintSet.connect(ETbox.id, ConstraintSet.START, ETbox.id, ConstraintSet.TOP)
+//        constraintSet.applyTo(LayoutETbox)
+
+        val ET = EditText(ContextThemeWrapper(instance, R.style.Note_EditText_parent))
 
         ET.layoutParams= ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         ET.id = View.generateViewId()
         ET.textSize = 18f
-        ET.textCursorDrawable = ContextCompat.getDrawable(this, R.drawable.cursor)
+
+//        ET.textCursorDrawable = ContextCompat.getDrawable(this, R.drawable.cursor)
         ET.backgroundTintMode = PorterDuff.Mode.SRC_OVER
         ET.background = null
-        ET.typeface = ResourcesCompat.getFont(this, R.font.montserrat)
+        ET.typeface = ResourcesCompat.getFont(instance, R.font.montserrat)
 
-        Toast.makeText(this,""+(binding.layoutLinearAdder.focusedChild is AppCompatEditText),Toast.LENGTH_LONG).show()
+//        Toast.makeText(instance,""+(binding.layoutLinearAdder.focusedChild is AppCompatEditText),Toast.LENGTH_LONG).show()
 
-        if(binding.layoutLinearAdder.focusedChild is EditText ||
+
+
+
+
+        var layoutLinearAdder = findViewById<LinearLayout>(R.id.layout_linear_adder)
+
+         if(binding.layoutLinearAdder.focusedChild is LinearLayout){
+            var parent = binding.layoutLinearAdder.focusedChild as LinearLayout
+            Log.d("index",""+parent.getChildAt(0))
+            if(parent.getChildAt(0) is ETCheckbox){
+                var childcount = parent.childCount
+                Log.d("index","inside")
+                var childschildid = parent.getChildAt(childcount-2).id
+                var childchlid = findViewById<ETCheckbox>(childschildid)
+                if(childchlid.getDataEditText()){
+                    parent.addView(ETbox, childcount-1)
+                    Log.d("index","inside")
+                }
+            }
+        }else if(binding.layoutLinearAdder.focusedChild is EditText ||
                 binding.layoutLinearAdder.focusedChild is AppCompatEditText){
             var index_et = binding.layoutLinearAdder.indexOfChild(binding.layoutLinearAdder.focusedChild)
             var current_et = binding.layoutLinearAdder.getChildAt(index_et) as EditText
             if(binding.layoutLinearAdder.getChildAt(index_et-1) is LinearLayout && current_et.text.isEmpty()){
                 var child = binding.layoutLinearAdder.getChildAt(index_et-1) as LinearLayout
+                var childcount = child.childCount
                 Log.d("index","negative index")
-                if(child.getChildAt(0) is ETCheckbox){
-                    var childschildid = child.getChildAt(0).id
+                if(child.getChildAt(childcount-2) is ETCheckbox){
+                    var childschildid = child.getChildAt(childcount-2).id
                     var childchlid = findViewById<ETCheckbox>(childschildid)
                     if(childchlid.getDataEditText()){
-                        child.addView(ETbox)
+                        child.addView(ETbox, childcount-1)
                     }
                 }
             }else{
                 if(binding.layoutLinearAdder.getChildAt(index_et+1) is LinearLayout){
                     var child = binding.layoutLinearAdder.getChildAt(index_et+1) as LinearLayout
-                    Log.d("index","positive index")
-                    if(child.getChildAt(0) is ETCheckbox){
-                        var childschildid = child.getChildAt(0).id
+                    var childcount = child.childCount
+
+                    Log.d("index","positive index "+child.getChildAt(childcount-2).id)
+                    if(child.getChildAt(childcount-2) is ETCheckbox){
+                        var childschildid = child.getChildAt(childcount-2).id
                         var childchlid = findViewById<ETCheckbox>(childschildid)
                         if(childchlid.getDataEditText()){
-                            child.addView(ETbox)
+                            child.addView(ETbox, childcount - 1)
                         }
                     }
                 } else{
                     linearLayoutBox.addView(ETbox)
+                    linearLayoutBox.addView(taskAddBox)
                     binding.layoutLinearAdder.addView(linearLayoutBox, index_et + 1)
                     if(binding.layoutLinearAdder.getChildAt(index_et+2) !is EditText){
                         current_et.setPadding(0,0,0,0)
@@ -275,15 +758,27 @@ class Note_Activity : AppCompatActivity() {
 
 
         } else{
-            linearLayoutBox.addView(ETbox)
-            var childcout = binding.layoutLinearAdder.childCount
-            if(binding.layoutLinearAdder.getChildAt(childcout-1) is EditText){
-                var child = binding.layoutLinearAdder.getChildAt(childcout -1)
-                child.setPadding(0,0,0,0)
+            var childcount = binding.layoutLinearAdder.childCount
+            if(binding.layoutLinearAdder.getChildAt(childcount-1) is EditText &&
+                !binding.layoutLinearAdder.getChildAt(childcount-1).equals(findViewById(R.id.et_desc))){
+                var chket = binding.layoutLinearAdder.getChildAt(childcount - 1) as EditText
+                if(chket.text.isNotEmpty()){
+                    var child = binding.layoutLinearAdder.focusedChild
+                    Log.d("index",""+child)
+
+                    linearLayoutBox.addView(ETbox)
+                    linearLayoutBox.addView(taskAddBox)
+                    var childcout = binding.layoutLinearAdder.childCount
+                    if(binding.layoutLinearAdder.getChildAt(childcout-1) is EditText){
+                        var child = binding.layoutLinearAdder.getChildAt(childcout -1)
+                        child.setPadding(0,0,0,0)
+                    }
+                    binding.layoutLinearAdder.addView(linearLayoutBox)
+                    ET.setPadding(0,0,0, 200)
+                    binding.layoutLinearAdder.addView(ET)
+                }
             }
-            binding.layoutLinearAdder.addView(linearLayoutBox)
-            ET.setPadding(0,0,0, 200)
-            binding.layoutLinearAdder.addView(ET)
+
 
         }
     }
@@ -295,93 +790,162 @@ class Note_Activity : AppCompatActivity() {
         binding.createdDate.text = formatedDate
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
-    private fun setColor() {
+    private fun setColor_red() {
+        dialog_style.cancel()
 
-        spannableString = SpannableStringBuilder(binding.etDesc.text)
-        spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
-            binding.etDesc.selectionStart,
-            binding.etDesc.selectionEnd,
-            0
-        )
-        spannableString.setSpan(android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
-            binding.etDesc.selectionStart,
-            binding.etDesc.selectionEnd,
-            0
-        )
-        binding.etDesc.setText(spannableString)
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+                binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.RED),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
+//        Log.d("Spannable", ""+spannable_html)
+    }
+    private fun setColor_blue() {
+        dialog_style.cancel()
 
-        spannable_html = Html.toHtml(spannableString, Html.FROM_HTML_MODE_COMPACT)
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+//        Log.d("Spannable", ""+spannable_html)
     }
 
-//    private fun uploadPhotos() {
-//        photos.forEach{
-//            photo ->
-//            var uri = Uri.parse(photo.localUri)
-//            val imageRef = storageReference.child("images/${auth.currentUser!!.uid}/${uri.lastPathSegment}")
-//            val uploadTask = imageRef.putFile(uri)
-//            uploadTask.addOnSuccessListener {
-//                Log.i("upload-task", "Image Uploaded $imageRef")
-//                val downloadUrl = imageRef.downloadUrl
-//                downloadUrl.addOnSuccessListener {
-//                    remoteUri ->
-//                    photo.remoteUri = remoteUri.toString()
-//                    updatePhotoDatabase(photo)
-//                }
-//            }
-//            uploadTask.addOnFailureListener {
-//                Log.e("upload-task", it.message ?: "No Message")
-//            }
-//
-//        }
-//    }
+    private fun setColor_cyan() {
+        dialog_style.cancel()
 
-//    private fun updatePhotoDatabase(photo: Note_Image_Data_Model) {
-//
-//        var photoCollection = firebaseFirestore.collection("Notes")
-//                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
-//                                    .collection("Mynotes")
-//                                    .document(note_id)
-//                                    .collection("photos")
-//        var handle = photoCollection.add(photo)
-//        handle.addOnSuccessListener {
-//            Log.i("upload-task", "Successfully updated phto medtadata")
-//            photo.id = it.id
-//            var updateCollection = firebaseFirestore.collection("Notes")
-//                                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
-//                                    .collection("Mynotes")
-//                                    .document(note_id)
-//                                    .collection("photos")
-//                                    .document(photo.id)
-//                                    .set(photo)
-//
-//            updateCollection.addOnSuccessListener {
-//                if(flag_image_uri == false){
-//                    imageUri = photo.remoteUri
-//                    firebaseFirestore.collection("Notes")
-//                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
-//                        .collection("Mynotes")
-//                        .document(note_id)
-//                        .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, note_id))
-//
-//                    flag_image_uri = true
-//                }
-//            }
-//            updateCollection.addOnFailureListener {
-//                Log.e("upload-task", "Error Updating photo data: ${it.message} ")
-//
-//            }
-//
-//        }
-//        handle.addOnFailureListener {
-//            Log.e("upload-task", "Error Updating photo data: ${it.message} ")
-//        }
-//
-//
-//    }
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.CYAN),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+//        Log.d("Spannable", ""+spannable_html)
+    }
+
+    private fun uploadPhotos(desc: String) {
+
+            var uri = Uri.parse(imageUri)
+            var path = "images/${auth.currentUser!!.uid}/${uri.lastPathSegment}"
+            val imageRef = storageReference.child(path)
+            val uploadTask = imageRef.putFile(uri)
+            uploadTask.addOnSuccessListener {
+                Log.i("upload-task", "Image Uploaded $imageRef")
+                val downloadUrl = imageRef.downloadUrl
+                downloadUrl.addOnSuccessListener {
+                    remoteUri ->
+                    Log.d("remote_url",""+remoteUri)
+                    updatePhotoDatabase(remoteUri.toString(),desc)
+                }
+            }
+            uploadTask.addOnFailureListener {
+                Log.e("upload-task", it.message ?: "No Message")
+            }
+
+
+    }
+
+    private fun updatePhotoDatabase(remoteUri: String, desc: String) {
+
+        if(desc.isEmpty()){
+            firebaseFirestore.collection("Notes")
+                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .collection("Mynotes")
+                .document(note_id)
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+        } else{
+            firebaseFirestore.collection("Notes")
+                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .collection("Mynotes")
+                .document(note_id)
+                .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+        }
+
+
+    }
 
     private fun gallery_intent() {
+        dialog_style.cancel()
         var intent = Intent(Intent.ACTION_PICK)
         intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryLauncher.launch(intent)
@@ -392,13 +956,24 @@ class Note_Activity : AppCompatActivity() {
         if(it.resultCode == Activity.RESULT_OK){
             binding.imageViewNote.visibility = ViewGroup.VISIBLE
             binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
+            binding.parentofparent.visibility = ViewGroup.VISIBLE
+            val parmas = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            parmas.setMargins(0,0,0,10)
+            var ll = findViewById<LinearLayout>(R.id.layout_linear_adder)
+            ll.layoutParams = parmas
+
+            ll.setPadding(0, 15, 0, 0)
+
             var outanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popdown_delete_btn_image_note)
             binding.imageDeleteNote.startAnimation(outanim)
             var uri = it.data!!.data
-            val photo = Note_Image_Data_Model(path = "images/${auth.currentUser!!.uid}/${uri!!.lastPathSegment}" ,localUri = it.data!!.data.toString())
-            photos.add(photo)
-            binding.imageViewNote.setImageURI(uri)
+//            val photo = Note_Image_Data_Model(path = "images/${auth.currentUser!!.uid}/${uri!!.lastPathSegment}" ,localUri = it.data!!.data.toString())
+//            photos.add(photo)
 
+            imageUri = uri.toString()
+
+            binding.imageViewNote.setImageURI(uri)
+            Log.d("uir",""+binding.imageViewNote)
         }
     }
 

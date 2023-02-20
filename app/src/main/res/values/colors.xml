@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black_100">#151515</color>
     <color name="black_300">#4b4b4b</color>
+    <color name="black_400">#393939</color>
     <color name="grey_100">#DEDEDE</color>
     <color name="grey_600">#E7E7E7</color>
     <color name="mtrl_textinput_default_box_stroke_color">#DDDDDD</color>
@@ -19,10 +20,19 @@
     <color name="blue_200">#326DC5</color>
     <color name="blue_300">#035FCA</color>
     <color name="blue_400">#2A5DBF</color>
+    <color name="green_200">#75E45D</color>
+    <color name="cyan_100">#69E4D9</color>
+    <color name="dblue_100">#6C67F2</color>
+    <color name="pink_100">#ED67F2</color>
+    <color name="purple_100">#9867F2</color>
+    <color name="yellow_100">#DDF267</color>
+    <color name="orange_100">#F2B367</color>
     <color name="blue_100">#679FF2</color>
+    <color name="red_200">#F26773</color>
     <color name="green_100">#429C34</color>
     <color name="red_100">#902B2B</color>
     <color name="black_200">#1A1A1A</color>
     <color name="grey_700">#C9C9C9</color>
     <color name="white_100">#F1F1F1</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

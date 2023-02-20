@@ -6,5 +6,6 @@ data class Note_Data_Model(
     var image_URL: String? = "",
     var order_view_all: String? = "",
     var edit_text_data_all: String? = "",
+    var task_data_all: String? = "",
     var note_id: String? = ""
 )

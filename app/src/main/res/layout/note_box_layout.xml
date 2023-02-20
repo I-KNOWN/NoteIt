@@ -65,7 +65,7 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/hole_punch_circle"
+                    android:src="@drawable/hole_punch_circle_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/note_title" />
 
@@ -78,7 +78,7 @@
                     android:textColor="@color/black_300"
                     android:textSize="13dp"
                     android:paddingEnd="10dp"
-                    android:lineHeight="18dp"
+                    android:lineHeight="15dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/note_title" />

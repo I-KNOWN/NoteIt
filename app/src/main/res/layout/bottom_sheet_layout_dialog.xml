@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialgo_style_">
+
+    <LinearLayout
+        android:id="@+id/Layout_add_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_image_add_white"
+            android:padding="1dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Add Image"/>
+
+    </LinearLayout>
+
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/Layout_add_image"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/red_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_red"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <ImageView
+                    android:id="@+id/blue_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_blue"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageView
+                    android:id="@+id/cyan_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_cyan"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageView
+                    android:id="@+id/dblue_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_dblue"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <ImageView
+                    android:id="@+id/green_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_green"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_orange"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_pink"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hole_punch_circle_purple"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/style_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nested_scroll"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="B"
+            android:textSize="30sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:background="@color/black_400"
+            android:layout_marginTop="10dp"/>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_italic"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="i"
+            android:textSize="30sp"
+            android:fontFamily="@font/neuton_italic"
+            android:textColor="@color/white"
+            android:background="@color/black_400"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"/>
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_underline"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="U"
+            android:textSize="30sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/white"
+            android:background="@color/black_400"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,7 +25,20 @@
 
     <style name="Note_EditText_parent" parent="Widget.AppCompat.EditText">
         <item name="android:inputType">textMultiLine|textVisiblePassword</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+
     </style>
 
+    <style name="bottomSheetStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Modal</item>
+    </style>
+    <style name="Modal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="background">@drawable/dialgo_style_</item>
+    </style>
+    
+    <style name="DialogAnimationStyle">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
 
 </resources>
