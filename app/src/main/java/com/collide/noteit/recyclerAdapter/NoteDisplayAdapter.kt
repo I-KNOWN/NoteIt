@@ -1,6 +1,7 @@
 package com.collide.noteit.recyclerAdapter
 
 import android.content.Context
+import android.content.Intent
 import android.media.Image
 import android.net.Uri
 import android.opengl.Visibility
@@ -19,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.collide.noteit.Note_Activity
 import com.collide.noteit.R
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -32,13 +34,13 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SnapshotMetadata
 import com.google.firebase.firestore.local.ReferenceSet
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import okhttp3.internal.cache.DiskLruCache.Snapshot
 import org.w3c.dom.Text
 
 class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var context: Context) :
     FirestoreRecyclerAdapter<Note_Data_Model, NoteDisplayAdapter.viewAdapter>(options) {
 
-    private lateinit var listener: onItemClickListener
 
     var dataList = mutableListOf<Note_Data_Model>()
     val storageRef = FirebaseStorage.getInstance().reference
@@ -49,6 +51,14 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
         position: Int,
         note: Note_Data_Model
     ) {
+        holder.main_box.setOnClickListener {
+
+            var intent = Intent(context, Note_Activity::class.java)
+            var gson = Gson()
+            var note_gson = gson.toJson(note)
+            intent.putExtra("note_data",note_gson)
+            context.startActivity(intent)
+        }
         holder.title.text = note.title
 
         var data_note_et = note.edit_text_data_all!!.split("|&@!~~~|")
@@ -66,6 +76,8 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.imagebox)
             holder.imagebox.visibility = ImageView.VISIBLE
+
+
 
 //            var data = note.image_URL!!.split("|")
 //            var path_string = data[0]
@@ -88,11 +100,11 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewAdapter {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.note_box_layout, parent, false)
-        return viewAdapter(view, listener)
+        return viewAdapter(view)
     }
 
 
-    class viewAdapter(itemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView){
+    class viewAdapter(itemView: View) : RecyclerView.ViewHolder(itemView){
         var title: TextView
         var des: TextView
         var tag1: TextView
@@ -108,23 +120,10 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
             main_box = itemView.findViewById(R.id.main_box)
             imagebox = itemView.findViewById(R.id.imagecard)
 
-            itemView.setOnClickListener {
-                var position = bindingAdapterPosition
-                if(position != RecyclerView.NO_POSITION && listener != null){
-                    listener.onItemClick()
-                }
 
-            }
 
         }
     }
 
-    interface onItemClickListener{
-        fun onItemClick(documentSnapshot: DocumentSnapshot, position: Int   )
-    }
-
-    fun setOnItemClickListener(listener: onItemClickListener ){
-        this.listener = listener
-    }
 
 }

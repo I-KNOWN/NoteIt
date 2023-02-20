@@ -6,7 +6,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_box"
     android:orientation="vertical"
-    android:clipToPadding="false">
+    android:background="@color/white"
+    android:clipToPadding="false"
+    android:clickable="true"
+    android:focusable="true">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/note_layout"

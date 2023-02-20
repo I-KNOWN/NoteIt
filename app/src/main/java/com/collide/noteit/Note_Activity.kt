@@ -43,6 +43,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -96,11 +97,18 @@ class Note_Activity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firebaseFirestore =  Firebase.firestore
 
-        setCurrentDate()
 
 //        binding.selectionImage.setOnClickListener {
 //            gallery_intent()
 //        }
+
+        if(intent.getStringExtra("note_data") != null){
+            loadData()
+        }else{
+            setCurrentDate()
+        }
+
+
         binding.imageViewNote.setOnLongClickListener {
             var inanim = AnimationUtils.loadAnimation(this@Note_Activity, R.anim.popup_delete_btn_image_note)
             binding.imageDeleteNote.startAnimation(inanim)
@@ -265,6 +273,136 @@ class Note_Activity : AppCompatActivity() {
 
     }
 
+    private fun loadData() {
+        var gson = Gson()
+        var note_data_string = intent.getStringExtra("note_data")
+        var note_data: Note_Data_Model = gson.fromJson(note_data_string, Note_Data_Model::class.java)
+
+        binding.etTitle.setText(note_data.title)
+        var orderlist = note_data.order_view_all!!.split("||||")
+        Log.d("Data-note", "order list: $orderlist")
+
+
+        for((index,value) in orderlist.withIndex()){
+
+            var ll_id: Int = 1
+
+
+            if(index == 0){
+                continue
+            }
+            when (value) {
+                "ET" -> {
+                    Log.d("Data-note","ET")
+                    val ET = EditText(ContextThemeWrapper(instance, R.style.Note_EditText_parent))
+                    ET.layoutParams= ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    ET.id = View.generateViewId()
+                    ET.textSize = 18f
+                    ET.backgroundTintMode = PorterDuff.Mode.SRC_OVER
+                    ET.background = null
+                    ET.typeface = ResourcesCompat.getFont(instance, R.font.montserrat)
+        //
+                        if(index == orderlist.size -1){
+                            ET.setPadding(0,0,0, 200)
+                            binding.etDesc.setPadding(0,0,0,0)
+                        }
+
+                    binding.layoutLinearAdder.addView(ET)
+                }
+                "LL" -> {
+                    Log.d("Data-note","LL")
+                    val linearLayoutBox = LinearLayout(instance)
+                    linearLayoutBox.orientation = LinearLayout.VERTICAL
+                    linearLayoutBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    linearLayoutBox.id = View.generateViewId()
+                    linearLayoutBox.gravity = Gravity.CENTER
+
+                    ll_id = linearLayoutBox.id
+
+                    binding.layoutLinearAdder.addView(linearLayoutBox)
+
+
+                }
+                "EC" -> {
+                    Log.d("Data-note","EC")
+                    val ETbox = ETCheckbox(instance, attrs = null)
+                    ETbox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    ETbox.id = View.generateViewId()
+
+                    var LL_box = findViewById<LinearLayout>(ll_id)
+                    LL_box.addView(ETbox)
+
+                }
+                "LA" -> {
+                    Log.d("Data-note","LA")
+                    var taskAddBox = LinearLayout(instance)
+                    taskAddBox.orientation = LinearLayout.HORIZONTAL
+                    taskAddBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    taskAddBox.id = View.generateViewId()
+                    taskAddBox.gravity = Gravity.CENTER_VERTICAL
+                    taskAddBox.setPadding(57,0,0,0)
+                    var imageView_plus = ImageView(instance)
+                    imageView_plus.setBackgroundResource(R.drawable.ic_rounded_plus_grey)
+        //        imageView_plus.setImageResource(R.drawable.ic_rounded_plus_grey)
+                    imageView_plus.layoutParams = ViewGroup.LayoutParams(45,45)
+                    imageView_plus.id = View.generateViewId()
+                    var TextView_add = TextView(instance)
+                    TextView_add.setText("Add Task")
+                    var params_tv = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                    params_tv.setMargins(15,0,0,0)
+                    TextView_add.layoutParams = params_tv
+                    TextView_add.id = View.generateViewId()
+                    TextView_add.setTypeface(ResourcesCompat.getFont(instance, R.font.montserrat_semibold))
+                    TextView_add.textSize = 15F
+                    TextView_add.setTextColor(ContextCompat.getColor(instance, R.color.grey_400))
+                    taskAddBox.addView(imageView_plus)
+                    taskAddBox.addView(TextView_add)
+                    taskAddBox.alpha = 0.3f
+                    taskAddBox.setOnClickListener {
+                        createTask()
+                        taskAddBox.alpha = 0.3f
+                    }
+                    var LL_box = findViewById<LinearLayout>(ll_id)
+                    LL_box.addView(taskAddBox)
+        //                LL?.addView(taskAddBox)
+
+                }
+            }
+        }
+        Log.d("Data-note","0: "+binding.layoutLinearAdder.getChildAt(0))
+        Log.d("Data-note","1: "+binding.layoutLinearAdder.getChildAt(1))
+        Log.d("Data-note","2: "+binding.layoutLinearAdder.getChildAt(2))
+        Log.d("Data-note","3: "+binding.layoutLinearAdder.getChildAt(3))
+        Log.d("Data-note","4: "+binding.layoutLinearAdder.getChildAt(4))
+
+
+//        var childs = binding.layoutLinearAdder.children
+//        for(child in childs){
+//            Log.d("Data-note",""+child)
+//            if(child is LinearLayout){
+//                Log.d("Data-note","linear")
+//                var parent = child as LinearLayout
+//                var parent_childs = parent.children
+//                Log.d("Data-note","linear: "+ parent.childCount)
+//                for(kid in parent_childs){
+//                    Log.d("Data-note",""+kid)
+//                }
+//            }
+//        }
+
+
+//
+
+
+//
+
+//
+//
+//
+//
+
+    }
+
     private fun showDialogStyle() {
         dialog_style = Dialog(this)
         dialog_style.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -388,6 +526,8 @@ class Note_Activity : AppCompatActivity() {
                             order_view_all += "EC||||"
                             var ETCheckbox_data = parent_child.getDataETtext()
                             task_data_all += "$ETCheckbox_data|&@!~~~|"
+                        }else if (parent_child is LinearLayout){
+                            order_view_all += "LA||||"
                         }
                     }
 
@@ -400,7 +540,11 @@ class Note_Activity : AppCompatActivity() {
 
             }
 
-            Log.d("Data","Here is the data")
+            Log.d("Data-note","Here is the data")
+            Log.d("Data-note","Order All :"+order_view_all)
+            Log.d("Data-note","ET Data All :"+edit_text_data_all)
+            Log.d("Data-note","Task Data All: "+task_data_all)
+
 
             firebaseFirestore.collection("Notes")
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)

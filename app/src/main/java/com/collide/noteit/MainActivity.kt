@@ -123,12 +123,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        notedisplayadapter.setOnItemClickListener(object: NoteDisplayAdapter.onItemClickListener{
-            override fun onItemClick(position: Int) {
-                Log.d("tagsss", "Position: $position")
-            }
-
-        })
 
     }
 
