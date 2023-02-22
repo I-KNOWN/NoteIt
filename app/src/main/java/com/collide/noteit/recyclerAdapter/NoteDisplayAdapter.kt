@@ -64,7 +64,43 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
         var data_note_et = note.edit_text_data_all!!.split("|&@!~~~|")
 
         holder.des.text = Html.fromHtml(data_note_et[0],   Html.FROM_HTML_MODE_COMPACT)
-        Log.d("image_url",""+holder.des.length())
+        Log.d("Data-note","desc: "+ data_note_et[0])
+        Log.d("image_url",""+holder.des)
+        Log.d("Data-note","color: "+note.note_color)
+        when(note.note_color){
+            "blue" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_blue)
+            }
+            "red" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_red)
+
+            }
+            "cyan" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
+
+            }
+            "dblue" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
+
+            }
+            "green" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_green)
+
+            }
+            "orange" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_orange)
+
+            }
+            "pink" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_pink)
+
+            }
+            "purple" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_purple)
+
+            }
+        }
+
         if(note.image_URL != ""){
 
             var url = Uri.parse(note.image_URL)
@@ -111,6 +147,7 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
         var tag2: TextView
         var main_box: LinearLayout
         var imagebox: ImageView
+        var punch_hole: ImageView
 
         init{
             title = itemView.findViewById(R.id.note_title)
@@ -119,7 +156,7 @@ class NoteDisplayAdapter(options: FirestoreRecyclerOptions<Note_Data_Model>, var
             tag2 = itemView.findViewById(R.id.tag2)
             main_box = itemView.findViewById(R.id.main_box)
             imagebox = itemView.findViewById(R.id.imagecard)
-
+            punch_hole = itemView.findViewById(R.id.punch_hole)
 
 
         }

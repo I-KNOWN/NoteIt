@@ -66,9 +66,9 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
+                    android:id="@+id/punch_hole"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/hole_punch_circle_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/note_title" />
 

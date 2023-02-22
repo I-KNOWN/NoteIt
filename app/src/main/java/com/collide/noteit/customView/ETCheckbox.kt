@@ -42,7 +42,7 @@ class ETCheckbox(context: Context?, attrs: AttributeSet?) : LinearLayout(context
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if(editText.text.isNotEmpty() && p0!!.length > 0 && p0!!.length < 2){
+                if(editText.text.isNotEmpty() && p0!!.length > 0 && p0!!.length < 2 && editText.text != null){
 
                     var parent = editText.parent.parent.parent.parent as LinearLayout
                     var childcount = parent.childCount
@@ -126,6 +126,11 @@ class ETCheckbox(context: Context?, attrs: AttributeSet?) : LinearLayout(context
         return true
     }
 
+    fun setDataEditText(value: String){
+        if(value != null){
+            editText.setText(value)
+        }
+    }
 
 
     private fun etEnable(checked: Boolean) {

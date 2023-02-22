@@ -29,8 +29,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.toSpanned
 import androidx.core.view.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.collide.noteit.customView.ETCheckbox
 import com.collide.noteit.dataClass.Note_Data_Model
@@ -48,6 +50,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class Note_Activity : AppCompatActivity() {
 
@@ -61,7 +64,7 @@ class Note_Activity : AppCompatActivity() {
     companion object{
         lateinit var instance: Note_Activity
     }
-
+    var image_changed = false
     val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
     var note_id: String = ""
     var flag_image_uri = false
@@ -69,8 +72,10 @@ class Note_Activity : AppCompatActivity() {
     var edit_text_data_all = ""
     var task_data_all = ""
     var desc = ""
+    var ll_id: Int = 1
     lateinit var spannableString: Spannable
     lateinit var spannable_html: String
+    var note_color_hole = "blue"
 
     private lateinit var firebaseFirestore: FirebaseFirestore
     var data_image: Intent? = null
@@ -102,11 +107,7 @@ class Note_Activity : AppCompatActivity() {
 //            gallery_intent()
 //        }
 
-        if(intent.getStringExtra("note_data") != null){
-            loadData()
-        }else{
-            setCurrentDate()
-        }
+
 
 
         binding.imageViewNote.setOnLongClickListener {
@@ -270,25 +271,111 @@ class Note_Activity : AppCompatActivity() {
 
 
 
+        if(intent.getStringExtra("note_data") != null){
+            loadData()
 
+            var chil = binding.layoutLinearAdder.getChildAt(2)
+            Log.d("Data-note",""+chil)
+
+        }else{
+            setCurrentDate()
+        }
     }
 
     private fun loadData() {
+        var Tag = "Data-note"
         var gson = Gson()
         var note_data_string = intent.getStringExtra("note_data")
         var note_data: Note_Data_Model = gson.fromJson(note_data_string, Note_Data_Model::class.java)
 
         binding.etTitle.setText(note_data.title)
-        var orderlist = note_data.order_view_all!!.split("||||")
-        Log.d("Data-note", "order list: $orderlist")
 
+        when(note_data.note_color){
+            "blue" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_blue)
+            }
+            "red" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
+
+            }
+            "cyan" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
+
+            }
+            "dblue" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
+
+            }
+            "green" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_green)
+
+            }
+            "orange" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_orange)
+
+            }
+            "pink" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_pink)
+
+            }
+            "purple" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_purple)
+
+            }
+        }
+
+        if(note_data.image_URL != ""){
+            var uri = Uri.parse(note_data.image_URL)
+            imageUri = note_data.image_URL.toString()
+            Glide.with(instance)
+                .load(uri)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(binding.imageViewNote)
+            binding.imageViewNote.visibility = ViewGroup.VISIBLE
+            binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
+            binding.parentofparent.visibility = ViewGroup.VISIBLE
+        }
+
+        note_id = note_data.note_id.toString()
+
+//        binding.imageViewNote.setImageURI(uri)
+        var orderlist = note_data.order_view_all!!.split("||||")
+        var etdata = note_data.edit_text_data_all!!.split("|&@!~~~|")
+        var taskdata = note_data.task_data_all!!.split("|&@!~~~|")
+
+        Log.d("Data-note", "order list: $orderlist")
+        Log.d("Data-note1", "etdata: "+ etdata)
+        Log.d("Data-note","taskdata: $taskdata")
+        var len: Int = 1
+        var data: String = ""
+//        for(value in etdata){
+//            Log.d("Data-note1", "before: ${value.toString().length}")
+//            len = value.length
+//            data = value.substring(0..len - 6 )
+//            Log.d("Data-note1", "after: $data \n len: $len")
+//        }
+
+        var ettext: Int = 0
+        var taskindex = 0
 
         for((index,value) in orderlist.withIndex()){
 
-            var ll_id: Int = 1
+            Log.d("Data-note1","val: "+value)
 
+            var LL2 = findViewById<LinearLayout>(R.id.layout_linear_adder)
 
             if(index == 0){
+                Log.d("Data-note1","inside kik "+ etdata[ettext])
+                var actual_data = etdata[ettext]
+                Log.d("Data-note","len: "+len)
+//                var data = actual_data.substring(0..len - 8 )
+                var data = actual_data
+
+                chk
+
+                binding.etDesc.setText(Html.fromHtml(data,   Html.FROM_HTML_MODE_COMPACT))
+                Log.d("Data-note","data ET: "+binding.etDesc.text)
+                ettext += 1
                 continue
             }
             when (value) {
@@ -307,7 +394,20 @@ class Note_Activity : AppCompatActivity() {
                             binding.etDesc.setPadding(0,0,0,0)
                         }
 
-                    binding.layoutLinearAdder.addView(ET)
+                    Log.d("Data-note",""+etdata[ettext])
+//                    var data_ET = etdata[ettext].substring(0 until etdata[ettext].length - 1 )
+//                    Log.d("Data-note","setdata: "+data_ET)
+//                    ET.setText("tick")
+                    var len = etdata[ettext].length
+                    var data = etdata[ettext].substring(0..len - 6 )
+                    Log.d("Data-note1","value: "+data)
+                    ET.setText(Html.fromHtml(data,   Html.FROM_HTML_MODE_COMPACT))
+
+                    ettext += 1
+                    LL2.addView(ET)
+                    Log.d("Data-note","data ET: "+ET.text)
+
+//                    binding.layoutLinearAdder.addView(ET)
                 }
                 "LL" -> {
                     Log.d("Data-note","LL")
@@ -318,8 +418,8 @@ class Note_Activity : AppCompatActivity() {
                     linearLayoutBox.gravity = Gravity.CENTER
 
                     ll_id = linearLayoutBox.id
-
-                    binding.layoutLinearAdder.addView(linearLayoutBox)
+//                    binding.layoutLinearAdder.addView(linearLayoutBox)
+                    LL2.addView(linearLayoutBox)
 
 
                 }
@@ -328,9 +428,13 @@ class Note_Activity : AppCompatActivity() {
                     val ETbox = ETCheckbox(instance, attrs = null)
                     ETbox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                     ETbox.id = View.generateViewId()
-
+//                    ++taskindex
                     var LL_box = findViewById<LinearLayout>(ll_id)
+
+//                    LL2.addView(ETbox)
                     LL_box.addView(ETbox)
+                    ETbox.setDataEditText(taskdata[taskindex])
+                    ++taskindex
 
                 }
                 "LA" -> {
@@ -363,7 +467,16 @@ class Note_Activity : AppCompatActivity() {
                         taskAddBox.alpha = 0.3f
                     }
                     var LL_box = findViewById<LinearLayout>(ll_id)
+
                     LL_box.addView(taskAddBox)
+
+                    var taskAddindex = LL_box.childCount - 1
+                    var childET = LL_box.getChildAt(taskAddindex - 1) as ETCheckbox
+                    if(childET.getDataEditText()){
+                        taskAddBox.alpha = 1.0f
+                    }
+
+//                    LL_box.addView(taskAddBox)
         //                LL?.addView(taskAddBox)
 
                 }
@@ -374,31 +487,6 @@ class Note_Activity : AppCompatActivity() {
         Log.d("Data-note","2: "+binding.layoutLinearAdder.getChildAt(2))
         Log.d("Data-note","3: "+binding.layoutLinearAdder.getChildAt(3))
         Log.d("Data-note","4: "+binding.layoutLinearAdder.getChildAt(4))
-
-//        var childs = binding.layoutLinearAdder.children
-//        for(child in childs){
-//            Log.d("Data-note",""+child)
-//            if(child is LinearLayout){
-//                Log.d("Data-note","linear")
-//                var parent = child as LinearLayout
-//                var parent_childs = parent.children
-//                Log.d("Data-note","linear: "+ parent.childCount)
-//                for(kid in parent_childs){
-//                    Log.d("Data-note",""+kid)
-//                }
-//            }
-//        }
-
-
-//
-
-
-//
-
-//
-//
-//
-//
 
     }
 
@@ -457,14 +545,55 @@ class Note_Activity : AppCompatActivity() {
         var btn_red = dialog_color.findViewById<ImageView>(R.id.red_btn)
         btn_red.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
+            note_color_hole = "red"
             dialog_color.cancel()
         }
 
         var btn_blue = dialog_color.findViewById<ImageView>(R.id.blue_btn)
         btn_blue.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_blue)
+            note_color_hole = "blue"
             dialog_color.cancel()
         }
+        var btn_cyan = dialog_color.findViewById<ImageView>(R.id.cyan_btn)
+        btn_cyan.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
+            note_color_hole = "cyan"
+            dialog_color.cancel()
+        }
+        var btn_dblue = dialog_color.findViewById<ImageView>(R.id.dblue_btn)
+        btn_dblue.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
+            note_color_hole = "dblue"
+            dialog_color.cancel()
+        }
+        var btn_green = dialog_color.findViewById<ImageView>(R.id.green_btn)
+        btn_green.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_green)
+            note_color_hole = "green"
+            dialog_color.cancel()
+        }
+        var btn_orange = dialog_color.findViewById<ImageView>(R.id.orange_btn)
+        btn_orange.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_orange)
+            note_color_hole = "orange"
+            dialog_color.cancel()
+        }
+        var btn_pink = dialog_color.findViewById<ImageView>(R.id.pink_btn)
+        btn_pink.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_pink)
+            note_color_hole = "pink"
+            dialog_color.cancel()
+        }
+        var btn_purple = dialog_color.findViewById<ImageView>(R.id.purple_btn)
+        btn_purple.setOnClickListener {
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_purple)
+            note_color_hole = "purple"
+            dialog_color.cancel()
+        }
+
+
+
 
 
         dialog_color.show()
@@ -549,15 +678,15 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole))
                 .addOnSuccessListener {
                     Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-
-                    if(imageUri.isNotEmpty()){
-                        uploadPhotos(desc)
-                    }
                     val intent = Intent(this@Note_Activity, MainActivity::class.java)
                     startActivity(intent)
+                    if(imageUri.isNotEmpty() && image_changed){
+                        uploadPhotos(desc)
+                    }
+
 
                 }
                 .addOnFailureListener {
@@ -1116,6 +1245,7 @@ class Note_Activity : AppCompatActivity() {
             imageUri = uri.toString()
 
             binding.imageViewNote.setImageURI(uri)
+            image_changed = true
             Log.d("uir",""+binding.imageViewNote)
         }
     }
