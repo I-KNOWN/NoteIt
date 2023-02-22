@@ -71,6 +71,7 @@ class Note_Activity : AppCompatActivity() {
     var order_view_all = ""
     var edit_text_data_all = ""
     var task_data_all = ""
+    var task_data_check_all = ""
     var desc = ""
     var ll_id: Int = 1
     lateinit var spannableString: Spannable
@@ -342,6 +343,7 @@ class Note_Activity : AppCompatActivity() {
         var orderlist = note_data.order_view_all!!.split("||||")
         var etdata = note_data.edit_text_data_all!!.split("|&@!~~~|")
         var taskdata = note_data.task_data_all!!.split("|&@!~~~|")
+        var taskcheck = note_data.task_check!!.split("|&@!~~~|")
 
         Log.d("Data-note", "order list: $orderlist")
         Log.d("Data-note1", "etdata: "+ etdata)
@@ -434,6 +436,7 @@ class Note_Activity : AppCompatActivity() {
 //                    LL2.addView(ETbox)
                     LL_box.addView(ETbox)
                     ETbox.setDataEditText(taskdata[taskindex])
+                    ETbox.setcheck(taskcheck[taskindex].toBoolean())
                     ++taskindex
 
                 }
@@ -674,6 +677,8 @@ class Note_Activity : AppCompatActivity() {
                         if (parent_child is ETCheckbox) {
                             order_view_all += "EC||||"
                             var ETCheckbox_data = parent_child.getDataETtext()
+                            var check = parent_child.getcheck().toString()
+                            task_data_check_all += "$check|&@!~~~|"
                             task_data_all += "$ETCheckbox_data|&@!~~~|"
                         }else if (parent_child is LinearLayout){
                             order_view_all += "LA||||"
@@ -686,8 +691,12 @@ class Note_Activity : AppCompatActivity() {
             edit_text_data_all = edit_text_data_all.substring(0, edit_text_data_all.length - 8)
             if(task_data_all.isNotEmpty()){
                 task_data_all = task_data_all.substring(0, task_data_all.length - 8)
-
             }
+//            var check_length = task_data_check_all.split("|&@!~~~|")
+//            Log.d("Data-note2","length: "+check_length[0].isEmpty())
+//            if(task_data_check_all.isNotEmpty()){
+//                task_data_check_all = task_data_check_all.substring(0, task_data_check_all.length - 8)
+//            }
 
             Log.d("Data-note","Here is the data")
             Log.d("Data-note","Order All :"+order_view_all)
@@ -699,7 +708,7 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
                 .addOnSuccessListener {
                     Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@Note_Activity, MainActivity::class.java)
@@ -731,8 +740,8 @@ class Note_Activity : AppCompatActivity() {
                     spannable_html = Html.toHtml(edittext_child_data, Html.FROM_HTML_MODE_COMPACT)
 
                     Log.d("Data","span html: "+ spannable_html)
-
-                    edit_text_data_all += "$spannable_html|&@!~~~|"
+                    var data = chkInputNewLine(spannable_html)
+                    edit_text_data_all += "$data|&@!~~~|"
                 } else if (child is LinearLayout) {
                     order_view_all += "LL||||"
                     var LiLayout = child as LinearLayout
@@ -741,7 +750,11 @@ class Note_Activity : AppCompatActivity() {
                         if (parent_child is ETCheckbox) {
                             order_view_all += "EC||||"
                             var ETCheckbox_data = parent_child.getDataETtext()
+                            var check = parent_child.getcheck().toString()
+                            task_data_check_all += "$check|&@!~~~|"
                             task_data_all += "$ETCheckbox_data|&@!~~~|"
+                        }else if (parent_child is LinearLayout){
+                            order_view_all += "LA||||"
                         }
                     }
 
@@ -753,6 +766,11 @@ class Note_Activity : AppCompatActivity() {
                 task_data_all = task_data_all.substring(0, task_data_all.length - 8)
 
             }
+//            var check_length = task_data_check_all.split("|&@!~~~|")
+//            Log.d("Data-note2","length: $check_length")
+//            if(task_data_check_all.isNotEmpty()){
+//                task_data_check_all = task_data_check_all.substring(0, task_data_check_all.length - 8)
+//            }
 
             desc = binding.etDesc.text.toString()
             var desc_length = desc.length
@@ -776,15 +794,15 @@ class Note_Activity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().currentUser!!.uid)
                         .collection("Mynotes")
                         .document(note_id)
-                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
                         .addOnSuccessListener {
                             Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-
+                            val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                            startActivity(intent)
                             if(imageUri.isNotEmpty()){
                                 uploadPhotos(desc)
                             }
-                            val intent = Intent(this@Note_Activity, MainActivity::class.java)
-                            startActivity(intent)
+
 
                         }
                         .addOnFailureListener {
@@ -1225,13 +1243,13 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
         } else{
             firebaseFirestore.collection("Notes")
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id))
+                .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
         }
 
 

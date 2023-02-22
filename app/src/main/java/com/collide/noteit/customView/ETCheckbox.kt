@@ -115,6 +115,14 @@ class ETCheckbox(context: Context?, attrs: AttributeSet?) : LinearLayout(context
 
     }
 
+    fun getcheck(): Boolean{
+        return checkbox.isChecked
+    }
+    fun setcheck(chk: Boolean){
+        checkbox.isChecked = chk
+        etEnable(checkbox.isChecked)
+    }
+
     fun getDataETtext(): String{
         return editText.text.toString()
     }
