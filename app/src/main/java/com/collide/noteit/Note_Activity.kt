@@ -365,13 +365,12 @@ class Note_Activity : AppCompatActivity() {
             var LL2 = findViewById<LinearLayout>(R.id.layout_linear_adder)
 
             if(index == 0){
-                Log.d("Data-note1","inside kik "+ etdata[ettext])
                 var actual_data = etdata[ettext]
                 Log.d("Data-note","len: "+len)
 //                var data = actual_data.substring(0..len - 8 )
-                var data = actual_data
+                var data:String = actual_data
+                Log.d("Data-note1","inside kik "+ etdata[ettext])
 
-                chk
 
                 binding.etDesc.setText(Html.fromHtml(data,   Html.FROM_HTML_MODE_COMPACT))
                 Log.d("Data-note","data ET: "+binding.etDesc.text)
@@ -399,8 +398,9 @@ class Note_Activity : AppCompatActivity() {
 //                    Log.d("Data-note","setdata: "+data_ET)
 //                    ET.setText("tick")
                     var len = etdata[ettext].length
-                    var data = etdata[ettext].substring(0..len - 6 )
+//                    var data = etdata[ettext].substring(0..len - 6 )
                     Log.d("Data-note1","value: "+data)
+                    var data = etdata[ettext]
                     ET.setText(Html.fromHtml(data,   Html.FROM_HTML_MODE_COMPACT))
 
                     ettext += 1
@@ -488,6 +488,27 @@ class Note_Activity : AppCompatActivity() {
         Log.d("Data-note","3: "+binding.layoutLinearAdder.getChildAt(3))
         Log.d("Data-note","4: "+binding.layoutLinearAdder.getChildAt(4))
 
+    }
+
+    private fun chkInputNewLine(actualData: String): String {
+        var length = actualData.length
+        Log.d("newline","length: $length")
+        if(length > 3){
+            Log.d("newline","inside if")
+            var last_data = actualData.substring(length -5 until length).trim()
+            Log.d("newline","last-data: $last_data")
+            Log.d("newline","chk-eq: ${last_data == "<br>"}")
+            if(last_data == "<br>"){
+
+                var data = actualData.substring(0 until length-5)
+                Log.d("newline","data: $data")
+                return data
+            }else{
+                return actualData
+            }
+
+        }
+        return actualData
     }
 
     private fun showDialogStyle() {
@@ -643,8 +664,8 @@ class Note_Activity : AppCompatActivity() {
                     spannable_html = Html.toHtml(edittext_child_data, Html.FROM_HTML_MODE_COMPACT)
 
                     Log.d("Data","span html: "+ spannable_html)
-
-                    edit_text_data_all += "$spannable_html|&@!~~~|"
+                    var data = chkInputNewLine(spannable_html)
+                    edit_text_data_all += "$data|&@!~~~|"
                 } else if (child is LinearLayout) {
                     order_view_all += "LL||||"
                     var LiLayout = child as LinearLayout
