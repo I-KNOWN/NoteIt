@@ -24,6 +24,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SignupActivity : AppCompatActivity() {
 
@@ -126,7 +128,10 @@ class SignupActivity : AppCompatActivity() {
     }
     private fun userCreation(user: FirebaseUser, provider: String, name: String) {
         val random = (1..8).random()
-        val userData = User_Profile_Detail(user.uid, name, user.email, "User_Icon/av${random}"+".png", provider)
+        var currentdate = Calendar.getInstance().time
+        var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
+        var formatedDate = DateFormat.format(currentdate)
+        val userData = User_Profile_Detail(user.uid, name, user.email, "User_Icon/av${random}"+".png", provider, formatedDate)
         Log.d("User", ""+userData)
         database.child("users").child(user.uid).setValue(userData)
     }

@@ -60,6 +60,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -180,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
 
         //Google Login
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.WEB_CLIENT_ID))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -297,7 +299,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun userCreation(user: FirebaseUser, provider: String) {
         val random = (1..8).random()
-        val user_data = User_Profile_Detail(user.uid, user.displayName, user.email, "User_Icon/av${random}"+".png", provider)
+        var currentdate = Calendar.getInstance().time
+        var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
+        var formatedDate = DateFormat.format(currentdate)
+        val user_data = User_Profile_Detail(user.uid, user.displayName, user.email, "User_Icon/av${random}"+".png", provider, formatedDate)
         database.child("users").child(user.uid).setValue(user_data)
     }
 

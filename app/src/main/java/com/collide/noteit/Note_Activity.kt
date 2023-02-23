@@ -74,6 +74,7 @@ class Note_Activity : AppCompatActivity() {
     var task_data_check_all = ""
     var desc = ""
     var ll_id: Int = 1
+    var formatedDate = ""
     lateinit var spannableString: Spannable
     lateinit var spannable_html: String
     var note_color_hole = "blue"
@@ -290,6 +291,7 @@ class Note_Activity : AppCompatActivity() {
         var note_data: Note_Data_Model = gson.fromJson(note_data_string, Note_Data_Model::class.java)
 
         binding.etTitle.setText(note_data.title)
+        binding.createdDate.setText(note_data.created_date)
 
         when(note_data.note_color){
             "blue" ->{
@@ -708,7 +710,7 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate))
                 .addOnSuccessListener {
                     Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@Note_Activity, MainActivity::class.java)
@@ -795,7 +797,7 @@ class Note_Activity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().currentUser!!.uid)
                         .collection("Mynotes")
                         .document(note_id)
-                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
+                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate))
                         .addOnSuccessListener {
                             Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@Note_Activity, MainActivity::class.java)
@@ -803,7 +805,7 @@ class Note_Activity : AppCompatActivity() {
                             if(imageUri.isNotEmpty()){
                                 uploadPhotos(desc)
                             }
-
+                            finish()
 
                         }
                         .addOnFailureListener {
@@ -1114,7 +1116,7 @@ class Note_Activity : AppCompatActivity() {
     private fun setCurrentDate() {
         var currentdate = Calendar.getInstance().time
         var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
-        var formatedDate = DateFormat.format(currentdate)
+        formatedDate = DateFormat.format(currentdate)
         binding.createdDate.text = formatedDate
     }
 

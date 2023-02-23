@@ -9,5 +9,6 @@ data class Note_Data_Model(
     var task_data_all: String? = "",
     var note_id: String? = "",
     var note_color: String? = "",
-    var task_check: String? = ""
+    var task_check: String? = "",
+    var created_date: String? = ""
 )

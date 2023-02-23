@@ -57,196 +57,196 @@ class ProfileActivity : AppCompatActivity() {
         _binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        var photourl = ""
-        firebaseDatabase = Firebase.database.reference
-        Log.d("User",""+auth.currentUser!!.uid)
-        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
-            .get()
-            .addOnSuccessListener {
-                photourl = it.value.toString()
-
-                Log.d("User",""+photourl)
-
-                firebaseReference = firebaseReference.child(photourl)
-                Log.d("User",""+firebaseReference)
-                firebaseReference.downloadUrl.addOnSuccessListener {
-                    Picasso.get().load(it).into(binding.iview)
-
-                }.addOnFailureListener {
-                    Log.d("FireStore","Fail to Get Data" + it.message)
-                }
-
-            }
-//
-
+//        auth = FirebaseAuth.getInstance()
+//        var photourl = ""
+//        firebaseDatabase = Firebase.database.reference
+//        Log.d("User",""+auth.currentUser!!.uid)
 //        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
 //            .get()
 //            .addOnSuccessListener {
-//
 //                photourl = it.value.toString()
 //
-//                Log.d("User", ""+it.value)
+//                Log.d("User",""+photourl)
+//
+//                firebaseReference = firebaseReference.child(photourl)
+//                Log.d("User",""+firebaseReference)
+//                firebaseReference.downloadUrl.addOnSuccessListener {
+//                    Picasso.get().load(it).into(binding.iview)
+//
+//                }.addOnFailureListener {
+//                    Log.d("FireStore","Fail to Get Data" + it.message)
+//                }
+//
 //            }
-
-
-
-
-        binding.openAvatar.setOnClickListener {
-            var intent = Intent(this, Avatar_Activity::class.java)
-            startActivity(intent)
-        }
-
-        getLoginProvider()
-
-//        var uri = Uri.parse("android.resource://$packageName/${R.drawable.google_logo}")
-//        firebaseReference = firebaseReference.child("Users_Profile/icon_User_basic")
-//        firebaseReference.putFile(uri).addOnCompleteListener {
-//            Toast.makeText(this, "Sent", Toast.LENGTH_SHORT).show()
-//        }.addOnFailureListener {
-//            Toast.makeText(this,"fail", Toast.LENGTH_SHORT).show()
+////
+//
+////        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
+////            .get()
+////            .addOnSuccessListener {
+////
+////                photourl = it.value.toString()
+////
+////                Log.d("User", ""+it.value)
+////            }
+//
+//
+//
+//
+//        binding.openAvatar.setOnClickListener {
+//            var intent = Intent(this, Avatar_Activity::class.java)
+//            startActivity(intent)
 //        }
-
-        binding.logoutBtn.setOnClickListener {
-            var intent = Intent(this, LoginActivity::class.java)
-            finish()
-            auth.signOut()
-            startActivity(intent)
-        }
-
-
-
-        binding.LinkGoogle.setOnClickListener {
-
-            if(!provider.contains("GOOGLE")){
-                linkingGoogle()
-            }
-
-        }
-
-        binding.LinkFB.setOnClickListener {
-
-            if(!provider.contains("FACEBOOK")){
-                LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile", "email"))
-            }
-
-        }
-        LoginManager.getInstance().registerCallback(callbackManager, object :
-            FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d(TAG, "facebook:onSuccess:$loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
-            }
-            override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-            }
-            override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
-            }
-        })
-
-
-
-    }
-    private fun getLoginProvider() {
-        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
-            .get()
-            .addOnSuccessListener {
-                provider = it.value.toString()
-
-                if(provider.contains("GOOGLE")){
-                    binding.LinkGoogle.text = "Google Linked"
-                }
-
-                if(provider.contains("FACEBOOK")){
-                    binding.LinkFB.text = "Facebook Linked"
-                }
-            }
-
-
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Pass the activity result back to the Facebook SDK
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-    }
-
-
-    private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(TAG, "handleFacebookAccessToken:$token")
-
-        val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.currentUser!!.linkWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "linkWithCredential:success")
-                    val user = task.result?.user
-
-                    provider = provider+" FACEBOOK |"
-                    firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
-                        .setValue(provider)
-
-                    getLoginProvider()
-
-                } else {
-                    Log.w(TAG, "linkWithCredential:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
-
-    private fun linkingGoogle() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.WEB_CLIENT_ID))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        val signInIntent = googleSignInClient.signInIntent
-
-        getResult.launch(signInIntent)
+//
+//        getLoginProvider()
+//
+////        var uri = Uri.parse("android.resource://$packageName/${R.drawable.google_logo}")
+////        firebaseReference = firebaseReference.child("Users_Profile/icon_User_basic")
+////        firebaseReference.putFile(uri).addOnCompleteListener {
+////            Toast.makeText(this, "Sent", Toast.LENGTH_SHORT).show()
+////        }.addOnFailureListener {
+////            Toast.makeText(this,"fail", Toast.LENGTH_SHORT).show()
+////        }
+//
+//        binding.logoutBtn.setOnClickListener {
+//            var intent = Intent(this, LoginActivity::class.java)
+//            finish()
+//            auth.signOut()
+//            startActivity(intent)
+//        }
+//
+//
+//
+//        binding.LinkGoogle.setOnClickListener {
+//
+//            if(!provider.contains("GOOGLE")){
+//                linkingGoogle()
+//            }
+//
+//        }
+//
+//        binding.LinkFB.setOnClickListener {
+//
+//            if(!provider.contains("FACEBOOK")){
+//                LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile", "email"))
+//            }
+//
+//        }
+//        LoginManager.getInstance().registerCallback(callbackManager, object :
+//            FacebookCallback<LoginResult> {
+//            override fun onSuccess(loginResult: LoginResult) {
+//                Log.d(TAG, "facebook:onSuccess:$loginResult")
+//                handleFacebookAccessToken(loginResult.accessToken)
+//            }
+//            override fun onCancel() {
+//                Log.d(TAG, "facebook:onCancel")
+//            }
+//            override fun onError(error: FacebookException) {
+//                Log.d(TAG, "facebook:onError", error)
+//            }
+//        })
 
 
 
     }
-
-    private val getResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-
-                try {
-
-                    val account = task.getResult(ApiException::class.java)
-                    val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
-                    auth.currentUser!!.linkWithCredential(credential)
-                        .addOnCompleteListener(this) { task ->
-                            if (task.isSuccessful) {
-                                Log.d("User", "linkWithCredential:success")
-                                provider = provider+" GOOGLE |"
-                                firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
-                                    .setValue(provider)
-
-                                getLoginProvider()
-
-
-                            } else {
-                                Log.w(TAG, "linkWithCredential:failure", task.exception)
-                                Toast.makeText(baseContext, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show()
-                            }
-                        }
-
-
-                } catch (e: ApiException) {
-                    Log.d("TAG", "Google Failed to SignIn", e)
-                }
-
-            }
-        }
+//    private fun getLoginProvider() {
+//        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
+//            .get()
+//            .addOnSuccessListener {
+//                provider = it.value.toString()
+//
+//                if(provider.contains("GOOGLE")){
+//                    binding.LinkGoogle.text = "Google Linked"
+//                }
+//
+//                if(provider.contains("FACEBOOK")){
+//                    binding.LinkFB.text = "Facebook Linked"
+//                }
+//            }
+//
+//
+//    }
+//
+//
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        // Pass the activity result back to the Facebook SDK
+//        callbackManager.onActivityResult(requestCode, resultCode, data)
+//    }
+//
+//
+//    private fun handleFacebookAccessToken(token: AccessToken) {
+//        Log.d(TAG, "handleFacebookAccessToken:$token")
+//
+//        val credential = FacebookAuthProvider.getCredential(token.token)
+//        auth.currentUser!!.linkWithCredential(credential)
+//            .addOnCompleteListener(this) { task ->
+//                if (task.isSuccessful) {
+//                    Log.d(TAG, "linkWithCredential:success")
+//                    val user = task.result?.user
+//
+//                    provider = provider+" FACEBOOK |"
+//                    firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
+//                        .setValue(provider)
+//
+//                    getLoginProvider()
+//
+//                } else {
+//                    Log.w(TAG, "linkWithCredential:failure", task.exception)
+//                    Toast.makeText(baseContext, "Authentication failed.",
+//                        Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//    }
+//
+//
+//    private fun linkingGoogle() {
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(getString(R.string.WEB_CLIENT_ID))
+//            .requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(this, gso)
+//
+//        val signInIntent = googleSignInClient.signInIntent
+//
+//        getResult.launch(signInIntent)
+//
+//
+//
+//    }
+//
+//    private val getResult =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//            if (it.resultCode == RESULT_OK) {
+//                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+//
+//                try {
+//
+//                    val account = task.getResult(ApiException::class.java)
+//                    val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+//                    auth.currentUser!!.linkWithCredential(credential)
+//                        .addOnCompleteListener(this) { task ->
+//                            if (task.isSuccessful) {
+//                                Log.d("User", "linkWithCredential:success")
+//                                provider = provider+" GOOGLE |"
+//                                firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
+//                                    .setValue(provider)
+//
+//                                getLoginProvider()
+//
+//
+//                            } else {
+//                                Log.w(TAG, "linkWithCredential:failure", task.exception)
+//                                Toast.makeText(baseContext, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//
+//
+//                } catch (e: ApiException) {
+//                    Log.d("TAG", "Google Failed to SignIn", e)
+//                }
+//
+//            }
+//        }
 }
