@@ -192,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkAndRequestPerm() {
         PermissionX.init(this)
-            .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            .permissions(Manifest.permission.CAMERA)
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
                     Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()

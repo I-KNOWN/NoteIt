@@ -202,7 +202,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun linkingGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.WEB_CLIENT_ID))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)

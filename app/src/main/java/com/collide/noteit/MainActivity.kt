@@ -24,6 +24,7 @@ import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.databinding.ActivityMainBinding
 import com.collide.noteit.login.LoginActivity
 import com.collide.noteit.recyclerAdapter.NoteDisplayAdapter
+import com.collide.noteit.tools.ProfileActivity
 //import com.facebook.AccessToken
 //import com.facebook.CallbackManager
 //import com.facebook.FacebookCallback
@@ -86,7 +87,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
+        binding.materialCardView.setOnClickListener {
+            var intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.recyclerView.addOnScrollListener(object:  RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

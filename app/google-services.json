@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "328105423593",
+    "firebase_url": "https://noteit-5f36c-default-rtdb.firebaseio.com",
     "project_id": "noteit-5f36c",
     "storage_bucket": "noteit-5f36c.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "328105423593-2e33bopdbaprjecfrafjqiqb30ot9c7u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.collide.noteit",
+            "certificate_hash": "1cf25469b4fcbe226e8c3d65f7a3a9263477b9a0"
+          }
+        },
         {
           "client_id": "328105423593-6shjs82acd8be9pc5a64vcvmoh328d46.apps.googleusercontent.com",
           "client_type": 3

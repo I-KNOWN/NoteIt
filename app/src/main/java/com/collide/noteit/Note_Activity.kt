@@ -137,7 +137,7 @@ class Note_Activity : AppCompatActivity() {
             Log.d("hold", ""+photos)
         }
         binding.addTask.setOnClickListener {
-            createTask()
+            createTask(it)
         }
         if(note_id == ""){
             note_id = UUID.randomUUID().toString()
@@ -466,7 +466,7 @@ class Note_Activity : AppCompatActivity() {
                     taskAddBox.addView(TextView_add)
                     taskAddBox.alpha = 0.3f
                     taskAddBox.setOnClickListener {
-                        createTask()
+                        createTask(it)
                         taskAddBox.alpha = 0.3f
                     }
                     var LL_box = findViewById<LinearLayout>(ll_id)
@@ -774,8 +774,9 @@ class Note_Activity : AppCompatActivity() {
 
             desc = binding.etDesc.text.toString()
             var desc_length = desc.length
+            Log.d("length_desc","$desc_length")
             if(desc_length >= 6){
-                desc = desc.substring(0..6)+"..."
+                desc = desc.substring(0..5)+"..."
             } else if(desc_length >= 5){
                 desc = desc.substring(0..5)+"..."
             } else if(desc_length >= 4){
@@ -932,7 +933,7 @@ class Note_Activity : AppCompatActivity() {
         }
     }
 
-    fun createTask() {
+    fun createTask(view:View) {
         val linearLayoutBox = LinearLayout(instance)
         linearLayoutBox.orientation = LinearLayout.VERTICAL
         linearLayoutBox.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -982,7 +983,7 @@ class Note_Activity : AppCompatActivity() {
         taskAddBox.alpha = 0.3f
 
         taskAddBox.setOnClickListener {
-            createTask()
+            createTask(it)
             taskAddBox.alpha = 0.3f
         }
 
@@ -1011,6 +1012,8 @@ class Note_Activity : AppCompatActivity() {
 
 
         var layoutLinearAdder = findViewById<LinearLayout>(R.id.layout_linear_adder)
+
+        var clicked = view
 
          if(binding.layoutLinearAdder.focusedChild is LinearLayout){
             var parent = binding.layoutLinearAdder.focusedChild as LinearLayout
@@ -1068,7 +1071,21 @@ class Note_Activity : AppCompatActivity() {
             }
 
 
-        } else{
+        }else if(clicked is LinearLayout){
+
+            var parent = clicked.parent as LinearLayout
+             if(parent.getChildAt(0) is ETCheckbox){
+                 var childcount = parent.childCount
+                 Log.d("index","inside")
+                 var childschildid = parent.getChildAt(childcount-2).id
+                 var childchlid = findViewById<ETCheckbox>(childschildid)
+                 if(childchlid.getDataEditText()){
+                     parent.addView(ETbox, childcount-1)
+                     Log.d("index","inside")
+                 }
+             }
+
+         }else{
             var childcount = binding.layoutLinearAdder.childCount
             if(binding.layoutLinearAdder.getChildAt(childcount-1) is EditText &&
                 !binding.layoutLinearAdder.getChildAt(childcount-1).equals(findViewById(R.id.et_desc))){
