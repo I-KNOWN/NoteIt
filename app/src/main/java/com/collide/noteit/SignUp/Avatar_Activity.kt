@@ -12,6 +12,7 @@ import com.collide.noteit.MainActivity
 import com.collide.noteit.dataClass.Avatar_Selection_Model
 import com.collide.noteit.databinding.ActivityAvatarBinding
 import com.collide.noteit.recyclerAdapter.AvatarSelectionAdapter
+import com.collide.noteit.tools.ProfileActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -71,17 +72,33 @@ class Avatar_Activity : AppCompatActivity() {
 
         })
 
-        binding.avatarSelectorBtn.setOnClickListener {
+        if(intent.getStringExtra("Loc").equals("Login")){
+            binding.avatarSelectorBtn.setOnClickListener {
 
-            Log.d("User", ""+avatarSelectionAdapter.index_position)
-            val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
+                Log.d("User", ""+avatarSelectionAdapter.index_position)
+                val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
 
-            databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
-            var intent = Intent(this, MainActivity::class.java)
-            finish()
-            startActivity(intent)
+                databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
+                var intent = Intent(this, MainActivity::class.java)
+                finish()
+                startActivity(intent)
 
+            }
+        } else{
+            binding.avatarSelectorBtn.setOnClickListener {
+
+                Log.d("User", ""+avatarSelectionAdapter.index_position)
+                val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
+
+                databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
+                var intent = Intent(this, ProfileActivity::class.java)
+                finish()
+                startActivity(intent)
+
+            }
         }
+
+
 
 
 

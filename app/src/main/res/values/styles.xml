@@ -33,12 +33,18 @@
         <item name="bottomSheetStyle">@style/Modal</item>
     </style>
     <style name="Modal" parent="Widget.Design.BottomSheet.Modal">
-        <item name="background">@drawable/dialgo_style_</item>
+        <item name="background">@drawable/bottom_dialog_background</item>
+    </style>
+
+    <style name="MyTransparentBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:colorBackground">@android:color/transparent</item>
     </style>
     
     <style name="DialogAnimationStyle">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
+
+
 
 </resources>

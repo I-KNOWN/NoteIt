@@ -324,6 +324,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateUI_avatar(){
         val intent = Intent(this, Avatar_Activity::class.java)
+        intent.putExtra("loc","Login")
         finish()
         val pair1 = androidx.core.util.Pair<View, String>(binding.logoView, "logo_big")
         val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pair1 ).toBundle()
