@@ -103,6 +103,9 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
     var filtered = false
 
+    var filteredLIst_unpin = arrayListOf<Note_Data_Model>()
+    var filteredLIst_pinned = arrayListOf<Note_Data_Model>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -226,30 +229,28 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
     private fun filterdListUnpinned(newText: String?) {
-        var filteredLIst = arrayListOf<Note_Data_Model>()
+        filteredLIst_unpin.clear()
         for(item in noteArrayListUnpinned){
             if(item.title!!.lowercase().contains(newText!!.lowercase())){
-                filteredLIst.add(item)
+                filteredLIst_unpin.add(item)
             }
         }
-            notedisplayadapterunpinned.setFilteredList(filteredLIst)
+            notedisplayadapterunpinned.setFilteredList(filteredLIst_unpin)
         filtered = true
-
         if (newText!!.isEmpty()){
             filtered = false
-
             notedisplayadapterunpinned.setFilteredList(noteArrayListUnpinned)
         }
     }
 
     private fun filterdListPinned(newText: String?) {
-        var filteredLIst = arrayListOf<Note_Data_Model>()
+        filteredLIst_pinned.clear()
         for(item in noteArrayListPinned){
             if(item.title!!.lowercase().contains(newText!!.lowercase())){
-                filteredLIst.add(item)
+                filteredLIst_pinned.add(item)
             }
         }
-        notedisplayadapterpinned.setFilteredList(filteredLIst)
+        notedisplayadapterpinned.setFilteredList(filteredLIst_pinned)
             filtered = true
         if (newText!!.isEmpty()){
             filtered = false
@@ -273,12 +274,13 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
     private fun setRecyclerView() {
+        noteArrayListUnpinned.clear()
+        noteArrayListPinned.clear()
         val ref = firebaseFirestore.collection("Notes")
             .document(auth.uid!!)
             .collection("Mynotes")
 
         ref.get().addOnSuccessListener { result ->
-
             for(value in result){
                 var note = value.toObject<Note_Data_Model>()
                 if(note.pinned_note == "Unpinned"){
@@ -294,20 +296,18 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             noteArrayListUnpinned.sortByDescending {
                 it.timestamp
             }
+            if(!filtered){
+                notedisplayadapterunpinned = NoteViewDispalyAdapter(noteArrayListUnpinned, this, this)
+                binding.recyclerViewUnpinned.layoutManager = GridLayoutManager(this, 2)
+                binding.recyclerViewUnpinned.adapter = notedisplayadapterunpinned
+                notedisplayadapterunpinned.notifyDataSetChanged()
 
-            notedisplayadapterunpinned = NoteViewDispalyAdapter(noteArrayListUnpinned, this, this)
-            binding.recyclerViewUnpinned.layoutManager = GridLayoutManager(this, 2)
-            binding.recyclerViewUnpinned.adapter = notedisplayadapterunpinned
-            notedisplayadapterunpinned.notifyDataSetChanged()
-
-            notedisplayadapterpinned = NoteViewDispalyAdapter(noteArrayListPinned, this, this)
-            binding.recyclerViewPinned.layoutManager = GridLayoutManager(this, 2)
-            binding.recyclerViewPinned.adapter = notedisplayadapterpinned
-            notedisplayadapterpinned.notifyDataSetChanged()
-
+                notedisplayadapterpinned = NoteViewDispalyAdapter(noteArrayListPinned, this, this)
+                binding.recyclerViewPinned.layoutManager = GridLayoutManager(this, 2)
+                binding.recyclerViewPinned.adapter = notedisplayadapterpinned
+                notedisplayadapterpinned.notifyDataSetChanged()
+            }
             setupTvNote()
-
-
         }.addOnFailureListener {
             Log.d("it_exp",""+it.message)
         }
@@ -489,7 +489,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         } else{
 
-            var note = noteArrayListUnpinned[position]
+            var note = filteredLIst_unpin[position]
 
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
                 vibarator_manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -505,8 +505,8 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
             delete_btn.setOnClickListener {
                 var note_id = note.note_id!!
-                noteArrayListUnpinned.removeAt(position)
-                noteArrayListUnpinned.sortByDescending {
+                filteredLIst_unpin.removeAt(position)
+                filteredLIst_unpin.sortByDescending {
                     it.timestamp
                 }
                 notedisplayadapterunpinned.notifyItemRemoved(position)
@@ -519,6 +519,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                     .document(note_id)
                     .delete()
                     .addOnSuccessListener {
+                        setRecyclerView()
 
                     }
                     .addOnFailureListener {
@@ -531,12 +532,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             pin_text.setText("Pin Note")
             pin_note.setOnClickListener {
                 var time_stamp = Timestamp.now()
-                noteArrayListPinned.add(noteArrayListUnpinned[position])
-                noteArrayListUnpinned.removeAt(position)
-                noteArrayListPinned.sortByDescending {
+                filteredLIst_pinned.add(filteredLIst_unpin[position])
+                filteredLIst_unpin.removeAt(position)
+                filteredLIst_pinned.sortByDescending {
                     it.timestamp
                 }
-                noteArrayListUnpinned.sortByDescending {
+                filteredLIst_unpin.sortByDescending {
                     it.timestamp
                 }
                 notedisplayadapterunpinned.notifyItemRemoved(position)
@@ -551,6 +552,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                     .document(note.note_id!!)
                     .update("pinned_note", "Pinned", "timestamp2", time_stamp)
                     .addOnSuccessListener {
+                        setRecyclerView()
 
                     }
                     .addOnFailureListener {
@@ -566,6 +568,8 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
     override fun onNoteOptionUnpin(position: Int) {
 
+
+        if(!filtered){
         var note = noteArrayListPinned[position]
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
@@ -637,8 +641,82 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 }
         }
         bottomSheetDialog.show()
-    }
+        }else{
+            var note = filteredLIst_pinned[position]
 
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                vibarator_manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                vibarator_manager.defaultVibrator
+            } else{
+                @Suppress("DEPRECATION")
+                getSystemService(VIBRATOR_SERVICE)
+            }
+
+            bottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
+            bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_delete_pin)
+
+            var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
+            delete_btn.setOnClickListener {
+                var note_id = note.note_id!!
+                filteredLIst_pinned.removeAt(position)
+                filteredLIst_pinned.sortByDescending {
+                    it.timestamp
+                }
+                notedisplayadapterpinned.notifyItemRemoved(position)
+                bottomSheetDialog.dismiss()
+                setupTvNote()
+
+                Toast.makeText(this, "Note Deleted", Toast.LENGTH_LONG).show()
+                firebaseFirestore.collection("Notes")
+                    .document(auth.uid!!)
+                    .collection("Mynotes")
+                    .document(note_id)
+                    .delete()
+                    .addOnSuccessListener {
+                        setRecyclerView()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Note Unable Delete", Toast.LENGTH_LONG).show()
+                    }
+            }
+
+            var pin_note: LinearLayout = bottomSheetDialog.findViewById(R.id.pin_note)!!
+            var pin_text: TextView = bottomSheetDialog.findViewById(R.id.tv_pin)!!
+            pin_text.setText("Unpin Note")
+            pin_note.setOnClickListener {
+                var time_stamp = Timestamp.now()
+                filteredLIst_unpin.add(filteredLIst_pinned[position])
+                filteredLIst_pinned.removeAt(position)
+                filteredLIst_pinned.sortByDescending {
+                    it.timestamp
+                }
+                filteredLIst_unpin.sortByDescending {
+                    it.timestamp
+                }
+                notedisplayadapterpinned.notifyItemRemoved(position)
+                notedisplayadapterunpinned.notifyDataSetChanged()
+                bottomSheetDialog.dismiss()
+                setupTvNote()
+
+                Toast.makeText(this, "Unpinned",Toast.LENGTH_LONG).show()
+                firebaseFirestore.collection("Notes")
+                    .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                    .collection("Mynotes")
+                    .document(note.note_id!!)
+                    .update("pinned_note", "Unpinned", "timestamp2", time_stamp)
+                    .addOnSuccessListener {
+                        setRecyclerView()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Unable to Pin Note",Toast.LENGTH_LONG).show()
+
+                    }
+            }
+            bottomSheetDialog.show()
+        }
+
+
+    }
 
 }
 

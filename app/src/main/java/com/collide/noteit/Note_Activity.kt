@@ -1334,15 +1334,6 @@ class Note_Activity : AppCompatActivity() {
         }
     }
 
-    private fun findEt(grandparent: ViewGroup, indexParent: Int): EditText {
-        var view = grandparent.getChildAt(indexParent - 1)
-        if(view is EditText){
-            return view
-        }
-        else{
-            return findEt(grandparent, indexParent - 1)
-        }
-    }
 
 
 }
