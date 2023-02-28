@@ -1,5 +1,8 @@
 package com.collide.noteit.dataClass
 
+import com.google.firebase.Timestamp
+
+
 data class Note_Data_Model(
     var title: String? = "",
     var des: String? = "",
@@ -11,5 +14,7 @@ data class Note_Data_Model(
     var note_color: String? = "",
     var task_check: String? = "",
     var created_date: String? = "",
-    var pinned_note: String? = ""
+    var pinned_note: String? = "",
+    var timestamp: Timestamp? = null,
+    var timestamp2: Timestamp? = null
 )

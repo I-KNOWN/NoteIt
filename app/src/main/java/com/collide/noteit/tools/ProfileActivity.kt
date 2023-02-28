@@ -57,6 +57,7 @@ class ProfileActivity : AppCompatActivity() {
     // Note Data From Intent
     companion object{
         var count_note: String = ""
+        var count_pinned_note: String = ""
         lateinit var user_data: User_Profile_Detail
     }
 
@@ -73,6 +74,7 @@ class ProfileActivity : AppCompatActivity() {
             var user_data_string = intent.getStringExtra("user_data")
             if(gson.fromJson(user_data_string, User_Profile_Detail::class.java) != null){
                 count_note = intent.getStringExtra("note_count").toString()
+                count_pinned_note = intent.getStringExtra("note_pinned_count").toString()
                 user_data = gson.fromJson(user_data_string, User_Profile_Detail::class.java)
             }
 
@@ -87,6 +89,14 @@ class ProfileActivity : AppCompatActivity() {
             binding.noteCount.setText("0${count_note}")
         } else{
             binding.noteCount.text = count_note
+        }
+
+        if(count_pinned_note.length == 1){
+            binding.pinnedCount.setText("00${count_pinned_note}")
+        } else if (count_pinned_note.length == 2){
+            binding.pinnedCount.setText("0${count_pinned_note}")
+        } else{
+            binding.pinnedCount.text = count_pinned_note
         }
 
         binding.nameTvAc.setText(user_data.name)

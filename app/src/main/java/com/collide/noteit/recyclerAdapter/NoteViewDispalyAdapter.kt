@@ -16,13 +16,18 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.collide.noteit.R
 import com.collide.noteit.dataClass.Note_Data_Model
 
-class NoteViewDispalyAdapter(private val noteList: ArrayList<Note_Data_Model>, var context: Context, var noteInterface: onNoteListener): RecyclerView.Adapter<NoteViewDispalyAdapter.ViewHolder>() {
+class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, var context: Context, var noteInterface: onNoteListener): RecyclerView.Adapter<NoteViewDispalyAdapter.ViewHolder>() {
 
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.note_box_layout, parent, false)
         return ViewHolder(view, noteInterface)
+    }
+
+    fun setFilteredList(noteList: ArrayList<Note_Data_Model>){
+        this.noteList = noteList
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -82,8 +87,6 @@ class NoteViewDispalyAdapter(private val noteList: ArrayList<Note_Data_Model>, v
                 .into(holder.imagebox)
             holder.imagebox.visibility = ImageView.VISIBLE
 
-
-
 //            var data = note.image_URL!!.split("|")
 //            var path_string = data[0]
 //            Log.d("data",""+path_string)
@@ -100,6 +103,8 @@ class NoteViewDispalyAdapter(private val noteList: ArrayList<Note_Data_Model>, v
 //                }.addOnFailureListener {
 //
 //                }
+        }else{
+            holder.imagebox.visibility = ImageView.INVISIBLE
         }
 
     }
@@ -131,16 +136,24 @@ class NoteViewDispalyAdapter(private val noteList: ArrayList<Note_Data_Model>, v
                 if(noteInterface != null){
                     var pos = absoluteAdapterPosition
                     if(pos != RecyclerView.NO_POSITION){
-                        noteInterface.onNoteClick(pos)
+                        noteInterface.onNoteClick(pos, it.parent as RecyclerView)
                     }
                 }
             }
             itemview.setOnLongClickListener(View.OnLongClickListener {
 
+                var parent = it.parent as RecyclerView
+
                 if(noteInterface != null){
                     var pos = absoluteAdapterPosition
                     if(pos != RecyclerView.NO_POSITION){
-                        noteInterface.onNoteOption(pos)
+
+                        if(parent.transitionName == "RU"){
+                            noteInterface.onNoteOption(pos)
+                        }else if(parent.transitionName == "RP"){
+                            noteInterface.onNoteOptionUnpin(pos)
+                        }
+
                     }
                 }
 
@@ -149,8 +162,9 @@ class NoteViewDispalyAdapter(private val noteList: ArrayList<Note_Data_Model>, v
         }
     }
     interface onNoteListener{
-        fun onNoteClick(position: Int)
+        fun onNoteClick(position: Int, view: View)
         fun onNoteOption(position: Int)
+        fun onNoteOptionUnpin(position: Int)
     }
 
 }

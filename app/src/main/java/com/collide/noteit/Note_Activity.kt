@@ -2,14 +2,11 @@ package com.collide.noteit
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
-import android.media.Image
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -25,20 +22,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.toSpanned
 import androidx.core.view.*
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.collide.noteit.customView.ETCheckbox
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.collide.noteit.observeconnectivity.ConnectivityObserver
+import com.collide.noteit.observeconnectivity.NetworkConnectivityObserver
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -46,11 +42,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import jp.wasabeef.glide.transformations.BlurTransformation
-import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class Note_Activity : AppCompatActivity() {
 
@@ -62,8 +57,11 @@ class Note_Activity : AppCompatActivity() {
     lateinit var dialog_color: Dialog
     var intentcalled = false
 
+    private lateinit var connectivityObserver: ConnectivityObserver
+
     companion object{
         lateinit var instance: Note_Activity
+        var connectivity = ""
     }
     var image_changed = false
     val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
@@ -91,6 +89,7 @@ class Note_Activity : AppCompatActivity() {
     private var image_name_list = mutableListOf<String>()
     var imageUri = ""
     var pinned_note = "Unpinned"
+    lateinit var timestamp: Timestamp
 
     private var storageReference: StorageReference = FirebaseStorage.getInstance().getReference()
     private lateinit var auth: FirebaseAuth
@@ -99,6 +98,11 @@ class Note_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityNoteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        connectivityObserver = NetworkConnectivityObserver(applicationContext)
+
+        connectivityObserver.observer().onEach {
+            connectivity = it.toString()
+        }.launchIn(lifecycleScope)
 
         instance = this
 
@@ -294,6 +298,8 @@ class Note_Activity : AppCompatActivity() {
 
         binding.etTitle.setText(note_data.title)
         binding.createdDate.setText(note_data.created_date)
+        Log.d("timestamp","1 "+note_data.timestamp)
+        timestamp = note_data.timestamp!!
 
         when(note_data.note_color){
             "blue" ->{
@@ -342,6 +348,7 @@ class Note_Activity : AppCompatActivity() {
         }
 
         note_id = note_data.note_id.toString()
+        formatedDate = note_data.created_date!!
 
 //        binding.imageViewNote.setImageURI(uri)
         var orderlist = note_data.order_view_all!!.split("||||")
@@ -506,14 +513,12 @@ class Note_Activity : AppCompatActivity() {
             Log.d("newline","last-data: $last_data")
             Log.d("newline","chk-eq: ${last_data == "<br>"}")
             if(last_data == "<br>"){
-
                 var data = actualData.substring(0 until length-5)
                 Log.d("newline","data: $data")
                 return data
             }else{
                 return actualData
             }
-
         }
         return actualData
     }
@@ -525,7 +530,9 @@ class Note_Activity : AppCompatActivity() {
 
         var add_image = dialog_style.findViewById<LinearLayout>(R.id.Layout_add_image)
         add_image.setOnClickListener {
-            gallery_intent()
+            if(connectivity == "Available"){
+                gallery_intent()
+            }
         }
 
         var select_bold = dialog_style.findViewById<AppCompatButton>(R.id.btn_Bold)
@@ -712,7 +719,7 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
                 .addOnSuccessListener {
                     Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
                     if(!intentcalled){
@@ -807,7 +814,7 @@ class Note_Activity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().currentUser!!.uid)
                         .collection("Mynotes")
                         .document(note_id)
-                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note))
+                        .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
                         .addOnSuccessListener {
                             Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
                             if(!intentcalled){
@@ -1135,6 +1142,8 @@ class Note_Activity : AppCompatActivity() {
         var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
         formatedDate = DateFormat.format(currentdate)
         binding.createdDate.text = formatedDate
+
+        timestamp = Timestamp.now()
     }
 
     private fun setColor_red() {
@@ -1279,13 +1288,13 @@ class Note_Activity : AppCompatActivity() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
+                .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
         } else{
             firebaseFirestore.collection("Notes")
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
-                .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all))
+                .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
         }
 
 
