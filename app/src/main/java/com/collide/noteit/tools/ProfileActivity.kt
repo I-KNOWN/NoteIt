@@ -1,11 +1,14 @@
 package com.collide.noteit.tools
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.collide.noteit.MainActivity
 import com.collide.noteit.R
 import com.collide.noteit.SignUp.Avatar_Activity
 import com.collide.noteit.dataClass.Note_Data_Model
@@ -73,12 +76,34 @@ class ProfileActivity : AppCompatActivity() {
             var gson = Gson()
             var user_data_string = intent.getStringExtra("user_data")
             if(gson.fromJson(user_data_string, User_Profile_Detail::class.java) != null){
+
+                var profile_icon = intent.getStringExtra("ProfileURL")
+                setPreProflie(profile_icon!!)
                 count_note = intent.getStringExtra("note_count").toString()
                 count_pinned_note = intent.getStringExtra("note_pinned_count").toString()
                 user_data = gson.fromJson(user_data_string, User_Profile_Detail::class.java)
             }
 
         }
+        Toast.makeText(this,"${intent.getStringExtra("change") != null}", Toast.LENGTH_LONG).show()
+        if(intent.getStringExtra("change")!= null){
+            var loc = intent.getStringExtra("change")
+
+            setPreProflie(loc!!)
+
+        }
+//
+//        else{
+//            firebaseReference = user_data.profile_image?.let { firebaseReference.child(it) }!!
+//            Log.d("User",""+firebaseReference)
+//            firebaseReference.downloadUrl.addOnSuccessListener {
+//                Picasso.get().load(it).into(binding.avatarIcon)
+//                Log.d("Profile_Activity_inside","updated: "+ it)
+//            }.addOnFailureListener {
+//                Log.d("FireStore","Fail to Get Data" + it.message)
+//            }
+//        }
+
         Log.d("Snapshot",""+ count_note)
 
         binding.tvJoinedDate.text = "Joined ${user_data.joined_date}"
@@ -104,14 +129,7 @@ class ProfileActivity : AppCompatActivity() {
 //        binding.tvJoinedDate.setText()
 
 //        var photourl = ""
-        firebaseReference = user_data.profile_image?.let { firebaseReference.child(it) }!!
-        Log.d("User",""+firebaseReference)
-        firebaseReference.downloadUrl.addOnSuccessListener {
-            Picasso.get().load(it).into(binding.avatarIcon)
 
-        }.addOnFailureListener {
-            Log.d("FireStore","Fail to Get Data" + it.message)
-        }
 ////
 //
 ////        firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
@@ -126,6 +144,12 @@ class ProfileActivity : AppCompatActivity() {
 //
 //
 //
+
+        binding.backBtnMain.setOnClickListener{
+            var intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.avatarSelection.setOnClickListener {
             var intent = Intent(this, Avatar_Activity::class.java)
             intent.putExtra("loc","Profile")
@@ -187,6 +211,36 @@ class ProfileActivity : AppCompatActivity() {
         binding.SignOut.setOnClickListener{
             auth.signOut()
             UpdateUI()
+        }
+    }
+
+    private fun setPreProflie(loc: String) {
+        when(loc){
+            "av1.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av1))
+            }
+            "av2.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av2))
+            }
+            "av3.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av3))
+            }
+            "av4.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av4))
+            }
+            "av5.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av5))
+            }
+            "av6.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av6))
+            }
+            "av7.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av7))
+            }
+            "av8.png"->{
+                binding.avatarIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av8))
+            }
+
         }
     }
 

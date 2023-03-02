@@ -73,14 +73,16 @@ class AvatarSelectionAdapter(var context: Context):
 
         var data = dataList[position]
 
-        val uri = Uri.parse(data.icon_uri)
+        holder.imageview.setImageDrawable(ContextCompat.getDrawable(context, data.icon_uri!!))
 
-
-
-        Picasso
-            .get()
-            .load(uri)
-            .into(holder.imageview)
+//        val uri = Uri.parse(data.icon_uri)
+//
+//
+//
+//        Picasso
+//            .get()
+//            .load(uri)
+//            .into(holder.imageview)
 
 
         if(index_position  == position){

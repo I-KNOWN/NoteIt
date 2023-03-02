@@ -11,9 +11,11 @@ import android.os.Bundle
 import android.os.VibratorManager
 import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.SearchView.OnQueryTextListener
@@ -22,6 +24,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.marginTop
@@ -82,6 +85,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     private lateinit var noteArrayListPinned: ArrayList<Note_Data_Model>
     lateinit var vibarator_manager: VibratorManager
 
+    var x1: Float = 0.0f
+    var y1: Float = 0.0f
+    var x2: Float = 0.0f
+    var y2: Float = 0.0f
+
+
     companion object {
         const val SHARED_PREFERS = "remoteUri"
         const val URI_ = "uri"
@@ -103,6 +112,8 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
     var filtered = false
 
+    var profile_Icon_value: String = ""
+
     var filteredLIst_unpin = arrayListOf<Note_Data_Model>()
     var filteredLIst_pinned = arrayListOf<Note_Data_Model>()
 
@@ -110,12 +121,15 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         auth = FirebaseAuth.getInstance()
         firebaseDatabase = Firebase.database.reference
         firebaseFirestore = Firebase.firestore
 
         noteArrayListUnpinned = arrayListOf()
         noteArrayListPinned = arrayListOf()
+
+        Toast.makeText(this,"renning",Toast.LENGTH_LONG).show()
 
         setupTvNote()
 
@@ -133,6 +147,8 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
 
         })
+
+
 
 
         Firebase.database.getReference("users")
@@ -185,7 +201,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
             var gson = Gson()
             var note_gson = gson.toJson(user_data)
-
+            intent.putExtra("ProfileURL", profile_Icon_value)
             intent.putExtra("user_data",note_gson)
             startActivity(intent)
         }
@@ -225,6 +241,28 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             startActivity(intent)
         }
 
+
+    }
+
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        when(event?.action){
+            MotionEvent.ACTION_DOWN ->{
+                x1 = event.x
+                y1 = event.y
+
+            }
+            MotionEvent.ACTION_UP ->{
+                x2 = event.x
+                y2 = event.y
+                if(x1 < x2){
+                    var intent = Intent(this, CameraActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        }
+        return super.onTouchEvent(event)
 
     }
 
@@ -343,24 +381,53 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
                 .get()
                 .addOnSuccessListener {
-                    var photourl = it.value.toString()
+                    profile_Icon_value = it.value.toString().split("/")[1]
 
-                    Log.d("User",""+photourl)
+                    Log.d("User",""+profile_Icon_value)
 
-                    firebaseReference = firebaseReference.child(photourl)
-                    Log.d("User",""+firebaseReference)
-                    firebaseReference.downloadUrl.addOnSuccessListener {
+                    when(profile_Icon_value){
+                        "av1.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av1))
+                        }
+                        "av2.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av2))
+                        }
+                        "av3.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av3))
+                        }
+                        "av4.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av4))
+                        }
+                        "av5.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av5))
+                        }
+                        "av6.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av6))
+                        }
+                        "av7.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av7))
+                        }
+                        "av8.png"->{
+                            binding.profileIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.av8))
+                        }
 
-                        Glide.with(this)
-                            .load(it)
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .into(binding.profileIcon)
-
-                        saveProfile(it.toString())
-
-                    }.addOnFailureListener {
-                        Log.d("FireStore","Fail to Get Data" + it.message)
                     }
+
+
+//                    firebaseReference = firebaseReference.child(photourl)
+//                    Log.d("User",""+firebaseReference)
+//                    firebaseReference.downloadUrl.addOnSuccessListener {
+//
+//                        Glide.with(this)
+//                            .load(it)
+//                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+//                            .into(binding.profileIcon)
+//
+//                        saveProfile(it.toString())
+//
+//                    }.addOnFailureListener {
+//                        Log.d("FireStore","Fail to Get Data" + it.message)
+//                    }
 
                 }
         }

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.collide.noteit.MainActivity
+import com.collide.noteit.R
 import com.collide.noteit.dataClass.Avatar_Selection_Model
 import com.collide.noteit.databinding.ActivityAvatarBinding
 import com.collide.noteit.recyclerAdapter.AvatarSelectionAdapter
@@ -53,17 +55,21 @@ class Avatar_Activity : AppCompatActivity() {
         binding.avatarView.layoutManager = GridLayoutManager(applicationContext, 2)
         binding.avatarView.adapter = avatarSelectionAdapter
 
-        databaseStorage.reference.child("User_Icon/").listAll()
-            .addOnSuccessListener {
-                for(item in it.items){
-                    item.downloadUrl.addOnSuccessListener {
-                        var urlstr = it.toString()
-                        dataList.add(Avatar_Selection_Model(item.name, urlstr ))
-                        Log.d("usericon", ""+dataList)
-                        avatarSelectionAdapter.setDataList(dataList)
-                    }
-                }
-            }
+
+
+        setupadapter()
+
+//        databaseStorage.reference.child("User_Icon/").listAll()
+//            .addOnSuccessListener {
+//                for(item in it.items){
+//                    item.downloadUrl.addOnSuccessListener {
+//                        var urlstr = it.toString()
+//                        dataList.add(Avatar_Selection_Model(item.name, urlstr ))
+//                        Log.d("usericon", ""+dataList)
+//                        avatarSelectionAdapter.setDataList(dataList)
+//                    }
+//                }
+//            }
 
         avatarSelectionAdapter.setOnItemClickListener(object: AvatarSelectionAdapter.onItemClickListener{
             override fun onItemClick(position: Int) {
@@ -72,16 +78,21 @@ class Avatar_Activity : AppCompatActivity() {
 
         })
 
-        if(intent.getStringExtra("Loc").equals("Login")){
+        Log.d("Avatar_Activity_testing", ""+intent.getStringExtra("Loc").equals("Login"))
+
+        if(intent.getStringExtra("loc").equals("Login")){
             binding.avatarSelectorBtn.setOnClickListener {
 
                 Log.d("User", ""+avatarSelectionAdapter.index_position)
                 val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
 
                 databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
-                var intent = Intent(this, MainActivity::class.java)
-                finish()
-                startActivity(intent)
+                    .addOnSuccessListener {
+                        var intent = Intent(this, MainActivity::class.java)
+                        finish()
+                        startActivity(intent)
+                    }
+
 
             }
         } else{
@@ -91,9 +102,13 @@ class Avatar_Activity : AppCompatActivity() {
                 val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
 
                 databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
-                var intent = Intent(this, ProfileActivity::class.java)
-                finish()
-                startActivity(intent)
+                    .addOnSuccessListener {
+                        var intent = Intent(this, ProfileActivity::class.java)
+                        intent.putExtra("change","${dataList[avatarSelectionAdapter.index_position].icon_name}")
+                        finish()
+                        startActivity(intent)
+                    }
+
 
             }
         }
@@ -102,5 +117,17 @@ class Avatar_Activity : AppCompatActivity() {
 
 
 
+    }
+
+    private fun setupadapter() {
+        dataList.add(Avatar_Selection_Model("av1.png", R.drawable.av1))
+        dataList.add(Avatar_Selection_Model("av2.png", R.drawable.av2))
+        dataList.add(Avatar_Selection_Model("av4.png", R.drawable.av4))
+        dataList.add(Avatar_Selection_Model("av3.png", R.drawable.av3))
+        dataList.add(Avatar_Selection_Model("av5.png", R.drawable.av5))
+        dataList.add(Avatar_Selection_Model("av6.png", R.drawable.av6))
+        dataList.add(Avatar_Selection_Model("av7.png", R.drawable.av7))
+        dataList.add(Avatar_Selection_Model("av8.png", R.drawable.av8))
+        avatarSelectionAdapter.setDataList(dataList)
     }
 }
