@@ -29,6 +29,9 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
         this.noteList = noteList
         notifyDataSetChanged()
     }
+    fun getCurrentList():ArrayList<Note_Data_Model>{
+         return noteList
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 

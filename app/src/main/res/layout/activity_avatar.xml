@@ -53,7 +53,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/avatarSelectorBtn"
-        android:layout_width="180dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:background="@drawable/login_button_background_rounded"
         android:paddingStart="35dp"

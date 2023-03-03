@@ -56,12 +56,12 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var provider: String
     var TAG = "CHK"
-
     // Note Data From Intent
     companion object{
         var count_note: String = ""
         var count_pinned_note: String = ""
         lateinit var user_data: User_Profile_Detail
+        var profile_icon = ""
     }
 
 
@@ -77,7 +77,7 @@ class ProfileActivity : AppCompatActivity() {
             var user_data_string = intent.getStringExtra("user_data")
             if(gson.fromJson(user_data_string, User_Profile_Detail::class.java) != null){
 
-                var profile_icon = intent.getStringExtra("ProfileURL")
+                profile_icon = intent.getStringExtra("ProfileURL")!!
                 setPreProflie(profile_icon!!)
                 count_note = intent.getStringExtra("note_count").toString()
                 count_pinned_note = intent.getStringExtra("note_pinned_count").toString()
@@ -85,6 +85,9 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         }
+
+
+
         Toast.makeText(this,"${intent.getStringExtra("change") != null}", Toast.LENGTH_LONG).show()
         if(intent.getStringExtra("change")!= null){
             var loc = intent.getStringExtra("change")
@@ -92,6 +95,18 @@ class ProfileActivity : AppCompatActivity() {
             setPreProflie(loc!!)
 
         }
+
+        if(intent.getStringExtra("index_pos") != null){
+            var data = intent.getStringExtra("index_pos").toString()
+            var data_int = data.toInt()
+
+            var data_string = "av${data_int}.png"
+
+
+            profile_icon = data_string
+
+        }
+
 //
 //        else{
 //            firebaseReference = user_data.profile_image?.let { firebaseReference.child(it) }!!
@@ -149,10 +164,15 @@ class ProfileActivity : AppCompatActivity() {
             var intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-
+        binding.backBtnMainTxt.setOnClickListener {
+            var intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
         binding.avatarSelection.setOnClickListener {
+            var num:Int = profile_icon[2].digitToInt()
             var intent = Intent(this, Avatar_Activity::class.java)
             intent.putExtra("loc","Profile")
+            intent.putExtra("icon_pos",num)
             finish()
             startActivity(intent)
         }
@@ -274,6 +294,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 //
 //
+    @Deprecated("Deprecated in Java")
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 

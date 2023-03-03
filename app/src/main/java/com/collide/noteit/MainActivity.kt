@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SearchView.OnQueryTextListener
 import android.widget.TextView
@@ -101,6 +102,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     private var firebaseReference = Firebase.storage.reference
 
     lateinit var bottomSheetDialog: BottomSheetDialog
+    lateinit var filterbottomSheetDialog: BottomSheetDialog
 
     var flag = "off"
 
@@ -116,20 +118,36 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
     var filteredLIst_unpin = arrayListOf<Note_Data_Model>()
     var filteredLIst_pinned = arrayListOf<Note_Data_Model>()
+    var iconfilter = arrayListOf<Note_Data_Model>()
+    var iconfilter_bool = false
+
+    var current_query_string = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        val scoresRef = Firebase.database.getReference("users")
+//        scoresRef.keepSynced(true)
+
+
+
+
+
+
+
+
+
         auth = FirebaseAuth.getInstance()
-        firebaseDatabase = Firebase.database.reference
+        firebaseDatabase = Firebase.database.reference.child("users")
+        firebaseDatabase.keepSynced(true)
         firebaseFirestore = Firebase.firestore
 
         noteArrayListUnpinned = arrayListOf()
         noteArrayListPinned = arrayListOf()
 
-        Toast.makeText(this,"renning",Toast.LENGTH_LONG).show()
 
         setupTvNote()
 
@@ -194,6 +212,11 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 //            }
 //        }
 
+        binding.filter.setOnClickListener {
+            filterItem()
+        }
+
+
         binding.materialCardView.setOnClickListener {
             var intent = Intent(this, ProfileActivity::class.java)
             intent.putExtra("note_count", ""+notedisplayadapterunpinned.itemCount)
@@ -244,6 +267,103 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
     }
 
+    private fun filterItem() {
+        filterbottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
+        filterbottomSheetDialog.setContentView(R.layout.bottom_sheet_layout_dialog_filter)
+
+        var btn_blank = filterbottomSheetDialog.findViewById<ImageView>(R.id.blank_btn)
+        btn_blank?.setOnClickListener {
+
+            if(current_query_string.isEmpty()){
+                notedisplayadapterunpinned.setFilteredList(noteArrayListUnpinned)
+                notedisplayadapterpinned.setFilteredList(noteArrayListPinned)
+            }else{
+                notedisplayadapterunpinned.setFilteredList(filteredLIst_unpin)
+                notedisplayadapterpinned.setFilteredList(filteredLIst_pinned)
+            }
+
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = false
+        }
+
+        var btn_red = filterbottomSheetDialog.findViewById<ImageView>(R.id.red_btn)
+        btn_red?.setOnClickListener {
+            filtericonitem("red")
+            filterbottomSheetDialog.dismiss()
+
+            iconfilter_bool = true
+        }
+
+        var btn_blue = filterbottomSheetDialog.findViewById<ImageView>(R.id.blue_btn)
+        btn_blue?.setOnClickListener {
+            filtericonitem("blue")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_cyan = filterbottomSheetDialog.findViewById<ImageView>(R.id.cyan_btn)
+        btn_cyan?.setOnClickListener {
+            filtericonitem("cyan")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_dblue = filterbottomSheetDialog.findViewById<ImageView>(R.id.dblue_btn)
+        btn_dblue?.setOnClickListener {
+            filtericonitem("dblue")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_green = filterbottomSheetDialog.findViewById<ImageView>(R.id.green_btn)
+        btn_green?.setOnClickListener {
+            filtericonitem("green")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_orange = filterbottomSheetDialog.findViewById<ImageView>(R.id.orange_btn)
+        btn_orange?.setOnClickListener {
+            filtericonitem("orange")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_pink = filterbottomSheetDialog.findViewById<ImageView>(R.id.pink_btn)
+        btn_pink?.setOnClickListener {
+            filtericonitem("pink")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_purple = filterbottomSheetDialog.findViewById<ImageView>(R.id.purple_btn)
+        btn_purple?.setOnClickListener {
+            filtericonitem("purple")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+
+        filterbottomSheetDialog.show()
+
+    }
+
+    private fun filtericonitem(s: String) {
+        var list_pinned = notedisplayadapterpinned.getCurrentList()
+        var icon_list_pin = arrayListOf<Note_Data_Model>()
+
+        var list_unpinned = notedisplayadapterunpinned.getCurrentList()
+        var icon_list_unpin = arrayListOf<Note_Data_Model>()
+
+        for(item in list_pinned){
+            if(item.note_color!!.lowercase().contains(s)){
+                icon_list_pin.add(item)
+            }
+        }
+
+        notedisplayadapterpinned.setFilteredList(icon_list_pin)
+        for(item in list_unpinned){
+            if(item.note_color!!.lowercase().contains(s)){
+                icon_list_unpin.add(item)
+            }
+        }
+
+        notedisplayadapterunpinned.setFilteredList(icon_list_unpin)
+    }
+
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
@@ -267,6 +387,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
     private fun filterdListUnpinned(newText: String?) {
+        current_query_string = newText!!
         filteredLIst_unpin.clear()
         for(item in noteArrayListUnpinned){
             if(item.title!!.lowercase().contains(newText!!.lowercase())){
@@ -276,12 +397,14 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             notedisplayadapterunpinned.setFilteredList(filteredLIst_unpin)
         filtered = true
         if (newText!!.isEmpty()){
+            current_query_string = ""
             filtered = false
             notedisplayadapterunpinned.setFilteredList(noteArrayListUnpinned)
         }
     }
 
     private fun filterdListPinned(newText: String?) {
+        current_query_string = newText!!
         filteredLIst_pinned.clear()
         for(item in noteArrayListPinned){
             if(item.title!!.lowercase().contains(newText!!.lowercase())){
@@ -291,6 +414,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         notedisplayadapterpinned.setFilteredList(filteredLIst_pinned)
             filtered = true
         if (newText!!.isEmpty()){
+            current_query_string = ""
             filtered = false
             notedisplayadapterpinned.setFilteredList(noteArrayListPinned)
         }
@@ -329,7 +453,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             }
             var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
             noteArrayListPinned.sortByDescending {
-                it.timestamp2
+                it.timestamp
             }
             noteArrayListUnpinned.sortByDescending {
                 it.timestamp
@@ -378,7 +502,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     private fun setProfileIcon() {
 
         if(loadProfileLocalData()){
-            firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("profile_image")
+            firebaseDatabase.child(auth.currentUser!!.uid).child("profile_image")
                 .get()
                 .addOnSuccessListener {
                     profile_Icon_value = it.value.toString().split("/")[1]

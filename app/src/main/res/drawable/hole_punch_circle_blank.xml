@@ -7,13 +7,6 @@
             <corners android:radius="800dp"/>
         </shape>
     </item>
-    <item>
-        <inset android:inset="4dp">
-            <shape android:shape="rectangle">
-                <corners android:radius="800dp"/>
-                <solid android:color="@color/cyan_100"/>
-            </shape>
-        </inset>
-    </item>
+
 
 </layer-list>

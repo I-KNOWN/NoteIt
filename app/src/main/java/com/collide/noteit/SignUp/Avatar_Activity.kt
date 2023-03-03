@@ -81,6 +81,7 @@ class Avatar_Activity : AppCompatActivity() {
         Log.d("Avatar_Activity_testing", ""+intent.getStringExtra("Loc").equals("Login"))
 
         if(intent.getStringExtra("loc").equals("Login")){
+            binding.textView2.text = "Login"
             binding.avatarSelectorBtn.setOnClickListener {
 
                 Log.d("User", ""+avatarSelectionAdapter.index_position)
@@ -96,6 +97,10 @@ class Avatar_Activity : AppCompatActivity() {
 
             }
         } else{
+            binding.textView2.text = "Save"
+            var pos = intent.getIntExtra("icon_pos", 1) - 1
+            avatarSelectionAdapter.setIndexPosition(pos)
+
             binding.avatarSelectorBtn.setOnClickListener {
 
                 Log.d("User", ""+avatarSelectionAdapter.index_position)
@@ -103,12 +108,13 @@ class Avatar_Activity : AppCompatActivity() {
 
                 databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
                     .addOnSuccessListener {
-                        var intent = Intent(this, ProfileActivity::class.java)
-                        intent.putExtra("change","${dataList[avatarSelectionAdapter.index_position].icon_name}")
-                        finish()
-                        startActivity(intent)
-                    }
 
+                    }
+                var intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("change","${dataList[avatarSelectionAdapter.index_position].icon_name}")
+                intent.putExtra("index_pos","${avatarSelectionAdapter.getIndexPosition() + 1}" )
+                finish()
+                startActivity(intent)
 
             }
         }
@@ -122,8 +128,8 @@ class Avatar_Activity : AppCompatActivity() {
     private fun setupadapter() {
         dataList.add(Avatar_Selection_Model("av1.png", R.drawable.av1))
         dataList.add(Avatar_Selection_Model("av2.png", R.drawable.av2))
-        dataList.add(Avatar_Selection_Model("av4.png", R.drawable.av4))
         dataList.add(Avatar_Selection_Model("av3.png", R.drawable.av3))
+        dataList.add(Avatar_Selection_Model("av4.png", R.drawable.av4))
         dataList.add(Avatar_Selection_Model("av5.png", R.drawable.av5))
         dataList.add(Avatar_Selection_Model("av6.png", R.drawable.av6))
         dataList.add(Avatar_Selection_Model("av7.png", R.drawable.av7))

@@ -207,11 +207,6 @@ class LoginActivity : AppCompatActivity() {
         return charseq != "" && Patterns.EMAIL_ADDRESS.matcher(charseq).matches()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Pass the activity result back to the Facebook SDK
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-    }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d("User", "handleFacebookAccessToken:$token")

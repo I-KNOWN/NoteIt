@@ -33,7 +33,9 @@ class AvatarSelectionAdapter(var context: Context):
         index_position = position
         notifyDataSetChanged()
     }
-
+    fun getIndexPosition(): Int{
+        return index_position
+    }
     fun setOnItemClickListener(listener: onItemClickListener){
         mListener = listener
     }
@@ -55,7 +57,7 @@ class AvatarSelectionAdapter(var context: Context):
             cardview2 = itemView.findViewById(R.id.iv_check)
 
             cardview.setOnClickListener {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(absoluteAdapterPosition)
 
             }
 

@@ -26,8 +26,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/avatar_selection_view_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             app:cardBackgroundColor="@color/grey_100"
             app:cardCornerRadius="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,8 +36,9 @@
 
             <ImageView
                 android:id="@+id/avatar_selection_view"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_gravity="center"
                 android:contentDescription="avatar Icon"
                 android:src="@drawable/av4" />
         </com.google.android.material.card.MaterialCardView>

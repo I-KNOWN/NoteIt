@@ -34,6 +34,7 @@ import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
 import com.collide.noteit.observeconnectivity.ConnectivityObserver
 import com.collide.noteit.observeconnectivity.NetworkConnectivityObserver
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,6 +45,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.checkerframework.common.subtyping.qual.Bottom
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,8 +55,8 @@ class Note_Activity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     lateinit var dialog: Dialog
-    lateinit var dialog_style: Dialog
-    lateinit var dialog_color: Dialog
+    lateinit var dialog_style: BottomSheetDialog
+    lateinit var dialog_color: BottomSheetDialog
     var intentcalled = false
 
     private lateinit var connectivityObserver: ConnectivityObserver
@@ -174,7 +176,9 @@ class Note_Activity : AppCompatActivity() {
         binding.backBtnMain.setOnClickListener {
             saveNote()
         }
-
+        binding.backBtnMainTxt.setOnClickListener {
+            saveNote()
+        }
 
 //        binding.etDesc.addTextChangedListener(object: TextWatcher{
 //            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -279,8 +283,24 @@ class Note_Activity : AppCompatActivity() {
 
 
 
+
         if(intent.getStringExtra("note_data") != null){
+            var anim = AnimationUtils.loadAnimation(this, R.anim.option_layout_out)
+            anim.duration = 250
+            anim.fillAfter = true
+            binding.optionLayout.startAnimation(anim)
+
             loadData()
+
+            for(child in binding.layoutLinearAdder.children){
+                child.setOnFocusChangeListener { view, b ->
+                    var anim = AnimationUtils.loadAnimation(this, R.anim.option_layout_in)
+                    anim.duration = 250
+                    anim.fillAfter = true
+                    binding.optionLayout.startAnimation(anim)
+                    child.onFocusChangeListener = null
+                }
+            }
 
             var chil = binding.layoutLinearAdder.getChildAt(2)
             Log.d("Data-note",""+chil)
@@ -296,10 +316,15 @@ class Note_Activity : AppCompatActivity() {
         var note_data_string = intent.getStringExtra("note_data")
         var note_data: Note_Data_Model = gson.fromJson(note_data_string, Note_Data_Model::class.java)
 
+        if(intent.getStringExtra("change_img") != null){
+            image_changed = true
+        }
+
         binding.etTitle.setText(note_data.title)
         binding.createdDate.setText(note_data.created_date)
         Log.d("timestamp","1 "+note_data.timestamp)
         timestamp = note_data.timestamp!!
+        pinned_note = note_data.pinned_note!!
 
         when(note_data.note_color){
             "blue" ->{
@@ -524,44 +549,44 @@ class Note_Activity : AppCompatActivity() {
     }
 
     private fun showDialogStyle() {
-        dialog_style = Dialog(this)
+        dialog_style = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
         dialog_style.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog_style.setContentView(R.layout.bottom_sheet_layout_dialog)
 
         var add_image = dialog_style.findViewById<LinearLayout>(R.id.Layout_add_image)
-        add_image.setOnClickListener {
+        add_image?.setOnClickListener {
             if(connectivity == "Available"){
                 gallery_intent()
             }
         }
 
         var select_bold = dialog_style.findViewById<AppCompatButton>(R.id.btn_Bold)
-        select_bold.setOnClickListener {
+        select_bold?.setOnClickListener {
             setBold()
         }
 
         var select_italic = dialog_style.findViewById<AppCompatButton>(R.id.btn_italic)
-        select_italic.setOnClickListener {
+        select_italic?.setOnClickListener {
             setItalic()
         }
 
         var select_underline = dialog_style.findViewById<AppCompatButton>(R.id.btn_underline)
-        select_underline.setOnClickListener {
+        select_underline?.setOnClickListener {
             setUnderline()
         }
 
         var btn_red = dialog_style.findViewById<ImageView>(R.id.red_btn)
-        btn_red.setOnClickListener {
+        btn_red?.setOnClickListener {
             setColor_red()
         }
 
         var btn_blue = dialog_style.findViewById<ImageView>(R.id.blue_btn)
-        btn_blue.setOnClickListener {
+        btn_blue?.setOnClickListener {
             setColor_blue()
         }
 
         var btn_cyan = dialog_style.findViewById<ImageView>(R.id.cyan_btn)
-        btn_cyan.setOnClickListener {
+        btn_cyan?.setOnClickListener {
             setColor_cyan()
         }
 
@@ -573,55 +598,55 @@ class Note_Activity : AppCompatActivity() {
     }
 
     private fun showDialogColor(){
-        dialog_color = Dialog(this)
+        dialog_color = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
         dialog_color.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog_color.setContentView(R.layout.bottom_sheet_layout_dialog_color_note)
 
         var btn_red = dialog_color.findViewById<ImageView>(R.id.red_btn)
-        btn_red.setOnClickListener {
+        btn_red?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
             note_color_hole = "red"
             dialog_color.cancel()
         }
 
         var btn_blue = dialog_color.findViewById<ImageView>(R.id.blue_btn)
-        btn_blue.setOnClickListener {
+        btn_blue?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_blue)
             note_color_hole = "blue"
             dialog_color.cancel()
         }
         var btn_cyan = dialog_color.findViewById<ImageView>(R.id.cyan_btn)
-        btn_cyan.setOnClickListener {
+        btn_cyan?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
             note_color_hole = "cyan"
             dialog_color.cancel()
         }
         var btn_dblue = dialog_color.findViewById<ImageView>(R.id.dblue_btn)
-        btn_dblue.setOnClickListener {
+        btn_dblue?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
             note_color_hole = "dblue"
             dialog_color.cancel()
         }
         var btn_green = dialog_color.findViewById<ImageView>(R.id.green_btn)
-        btn_green.setOnClickListener {
+        btn_green?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_green)
             note_color_hole = "green"
             dialog_color.cancel()
         }
         var btn_orange = dialog_color.findViewById<ImageView>(R.id.orange_btn)
-        btn_orange.setOnClickListener {
+        btn_orange?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_orange)
             note_color_hole = "orange"
             dialog_color.cancel()
         }
         var btn_pink = dialog_color.findViewById<ImageView>(R.id.pink_btn)
-        btn_pink.setOnClickListener {
+        btn_pink?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_pink)
             note_color_hole = "pink"
             dialog_color.cancel()
         }
         var btn_purple = dialog_color.findViewById<ImageView>(R.id.purple_btn)
-        btn_purple.setOnClickListener {
+        btn_purple?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_purple)
             note_color_hole = "purple"
             dialog_color.cancel()
