@@ -294,7 +294,6 @@ class ProfileActivity : AppCompatActivity() {
     }
 //
 //
-    @Deprecated("Deprecated in Java")
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 

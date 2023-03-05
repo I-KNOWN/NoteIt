@@ -39,7 +39,7 @@ class PreviewActivity : AppCompatActivity() {
         binding.btnClose.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.right_slide_out_acitivity, R.anim.left_slide_in_acitivity)
+            overridePendingTransition(R.anim.left_slide_in_acitivity, R.anim.right_slide_out_acitivity)
         }
 
         binding.btnAccept.setOnClickListener {

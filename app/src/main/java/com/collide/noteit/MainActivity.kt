@@ -264,6 +264,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             startActivity(intent)
         }
 
+        binding.btnCamera.setOnClickListener {
+            var intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.right_slide_in_acitivity, R.anim.left_slide_out_acitivity)
+
+        }
 
     }
 
@@ -365,26 +371,26 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-        when(event?.action){
-            MotionEvent.ACTION_DOWN ->{
-                x1 = event.x
-                y1 = event.y
-
-            }
-            MotionEvent.ACTION_UP ->{
-                x2 = event.x
-                y2 = event.y
-                if(x1 < x2){
-                    var intent = Intent(this, CameraActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-        }
-        return super.onTouchEvent(event)
-
-    }
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//
+//        when(event?.action){
+//            MotionEvent.ACTION_DOWN ->{
+//                x1 = event.x
+//                y1 = event.y
+//
+//            }
+//            MotionEvent.ACTION_UP ->{
+//                x2 = event.x
+//                y2 = event.y
+//                if(x1 < x2){
+//                    var intent = Intent(this, CameraActivity::class.java)
+//                    startActivity(intent)
+//                }
+//            }
+//        }
+//        return super.onTouchEvent(event)
+//
+//    }
 
     private fun filterdListUnpinned(newText: String?) {
         current_query_string = newText!!
@@ -458,6 +464,8 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             noteArrayListUnpinned.sortByDescending {
                 it.timestamp
             }
+
+
             if(!filtered){
                 notedisplayadapterunpinned = NoteViewDispalyAdapter(noteArrayListUnpinned, this, this)
                 binding.recyclerViewUnpinned.layoutManager = GridLayoutManager(this, 2)

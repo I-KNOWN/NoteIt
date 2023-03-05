@@ -62,7 +62,12 @@ class CameraActivity : AppCompatActivity() {
         binding.galleryImg.setOnClickListener {
             gallery_intent()
         }
+        binding.bkBtn.setOnClickListener{
+            val intent = Intent(this@CameraActivity, MainActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.left_slide_in_acitivity, R.anim.right_slide_out_acitivity)
 
+        }
     }
 
     private fun gallery_intent() {
@@ -126,7 +131,7 @@ class CameraActivity : AppCompatActivity() {
                     overridePendingTransition(R.anim.right_slide_in_acitivity, R.anim.left_slide_out_acitivity)
                     binding.flashImg.setImageDrawable(ContextCompat.getDrawable(this@CameraActivity, R.drawable.ic_baseline_flash_off))
                     flash_bool = false
-                    cameraProvider.unbindAll()
+//                    cameraProvider.unbindAll()
                 }
 
                 override fun onError(exception: ImageCaptureException) {

@@ -84,7 +84,7 @@ class Avatar_Activity : AppCompatActivity() {
             binding.textView2.text = "Login"
             binding.avatarSelectorBtn.setOnClickListener {
 
-                Log.d("User", ""+avatarSelectionAdapter.index_position)
+                Log.d("User_Avatar_Activity", ""+avatarSelectionAdapter.index_position)
                 val profile_image_name = "User_Icon/"+dataList[avatarSelectionAdapter.index_position].icon_name
 
                 databaseReference.child("users").child(auth.currentUser!!.uid).child("profile_image").setValue(profile_image_name)
