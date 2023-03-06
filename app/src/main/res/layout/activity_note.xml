@@ -7,6 +7,8 @@
     tools:context=".Note_Activity"
     android:id="@+id/const_layout"
     android:clipToPadding="false"
+    style="@style/SCREEN"
+
     >
     <!--    android:paddingEnd="25dp"-->
     <!--    android:paddingStart="25dp"-->
@@ -46,7 +48,7 @@
             android:layout_height="40dp"
             android:layout_marginLeft="-15dp"
             android:background="@drawable/ic_round_left_arrow"
-            android:backgroundTint="@color/black_100"
+            style="@style/bk_btn_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +61,7 @@
             android:text="Notes"
             android:textSize="16dp"
             android:layout_marginLeft="-6dp"
-            android:textColor="@color/black"
+            style="@style/bk_btn_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/back_btn_main"
             app:layout_constraintTop_toTopOf="parent" />
@@ -92,20 +94,21 @@
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textVisiblePassword"
-                android:text=""
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:backgroundTintMode="src_over"
+
+                android:fontFamily="@font/montserrat_bold"
                 android:hint="Title"
 
-                android:backgroundTintMode="src_over"
-                android:background="@null"
-                android:textSize="36sp"
-                android:fontFamily="@font/montserrat_bold"
-                android:textColor="@color/black"
-                android:textCursorDrawable="@drawable/edittext_title_cursor_height"
+                android:inputType="textVisiblePassword"
                 android:maxLength="17"
-                android:textColorHint="@color/black"
-                android:paddingEnd="25dp"
                 android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:text=""
+                style="@style/note_title_hint"
+                android:textCursorDrawable="@drawable/edittext_title_cursor_height"
+                android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -203,9 +206,10 @@
                         android:backgroundTintMode="src_over"
                         android:fontFamily="@font/montserrat"
                         android:hint="Desc"
-                        android:inputType="textMultiLine|textVisiblePassword"
+                        android:lineHeight="25dp"
+                        android:layout_marginTop="3dp"
                         android:paddingBottom="100dp"
-                        android:textColorHint="@color/black_300"
+                        style="@style/note_des_hint"
                         android:textCursorDrawable="@drawable/cursor"
                         android:textSize="18dp" />
 
@@ -249,7 +253,7 @@
         android:id="@+id/option_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black_200"
+        style="@style/option_bg"
         android:paddingStart="20dp"
         android:paddingTop="13dp"
         android:paddingEnd="20dp"
@@ -259,21 +263,28 @@
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="visible">
 
-
-        <TextView
+        <androidx.cardview.widget.CardView
             android:id="@+id/selection_style"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/rounded_bold_icon"
-            android:fontFamily="@font/montserrat_bold"
-            android:gravity="center"
-            android:text="S"
-            android:textColor="@color/black"
-            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            tools:layout_editor_absoluteX="20dp" />
+            app:cardCornerRadius="5dp"
+            app:cardElevation="0dp"
+
+            >
+            <TextView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:fontFamily="@font/montserrat_black"
+                android:gravity="center"
+                android:text="S"
+                style="@style/option_btn_bg2"
+                android:textSize="16sp"
+                 />
+        </androidx.cardview.widget.CardView>
+
 
 <!--        <TextView-->
 <!--            android:id="@+id/selection_image"-->
@@ -298,8 +309,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_medium_italic"
             android:text="Wed, Jul 4, '2022"
-            android:textSize="14sp"
-            android:textColor="@color/grey_400"
+            android:textSize="12sp"
+            style="@style/TEXT3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/selection_style"
             app:layout_constraintStart_toEndOf="@+id/add_task"
@@ -321,15 +332,16 @@
 <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
 
-        <TextView
+        <ImageView
             android:id="@+id/add_task"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:background="@drawable/little_rounded_task_add"
+            android:background="@drawable/ic_task_filled"
             android:fontFamily="@font/neuton_italic"
             android:gravity="center"
             android:textColor="@color/black"
             android:textSize="16sp"
+            style="@style/option_btn_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

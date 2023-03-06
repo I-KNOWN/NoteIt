@@ -76,16 +76,13 @@ class NoteDisplayAdapter_dupe(var context: Context) :
     class viewAdapter(itemView: View) : RecyclerView.ViewHolder(itemView){
         var title: TextView
         var des: TextView
-        var tag1: TextView
-        var tag2: TextView
         var main_box: LinearLayout
         var imagebox: ImageView
 
         init{
             title = itemView.findViewById(R.id.note_title)
             des = itemView.findViewById(R.id.note_desc)
-            tag1 = itemView.findViewById(R.id.tag1)
-            tag2 = itemView.findViewById(R.id.tag2)
+
             main_box = itemView.findViewById(R.id.main_box)
             imagebox = itemView.findViewById(R.id.imagecard)
         }

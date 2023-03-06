@@ -23,4 +23,87 @@
 
     </style>
 
+    <style name="SCREEN" >
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="TEXT">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TEXT2">
+        <item name="android:textColor">@color/black_text</item>
+    </style>
+    <style name="TEXT3">
+        <item name="android:textColor">@color/black_text2</item>
+    </style>
+    <style name="filer_back">
+        <item name="android:background">@drawable/filter_btn_rounded</item>
+    </style>
+    <style name="filter_icon">
+        <item name="android:background">@drawable/filter_dark</item>
+    </style>
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
+        <item name="android:textColorHint">@color/grey_700</item>
+        <item name="android:tint">@color/black</item>
+    </style>
+    <style name="filter_ripple">
+        <item name="android:background">@drawable/ripple_effect_rounded</item>
+    </style>
+    <style name="common_ripple">
+        <item name="android:background">@drawable/ripple_effect_rounded</item>
+    </style>
+    <style name="profile_back">
+        <item name="android:backgroundTint">@color/whiteish_back</item>
+    </style>
+
+    <style name="note_box">
+        <item name="android:background">@drawable/border_note_grey</item>
+    </style>
+
+    <style name="filter_dialog_bg">
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="no_format_bg">
+        <item name="android:background">@drawable/hole_punch_circle_blank</item>
+        <item name="android:src">@drawable/ic_rounded_plus4_black</item>
+    </style>
+    <style name="slider">
+        <item name="android:background">@color/grey_200</item>
+    </style>
+    <style name="option_back">
+        <item name="android:background">@drawable/rounded_options_black</item>
+    </style>
+    <style name="add_note_bg">
+        <item name="android:src">@drawable/ic_rounded_plus4</item>
+    </style>
+
+    <style name="option_bg">
+        <item name="android:background">@color/style_back_light</item>
+    </style>
+
+    <style name="option_btn_bg">
+        <item name="android:backgroundTint">@color/black_text</item>
+    </style>
+    <style name="option_btn_bg2">
+        <item name="android:background">@color/black_text</item>
+        <item name="android:textColor">@color/style_back_light</item>
+    </style>
+    <style name="note_title_hint">
+        <item name="android:textColorHint">@color/grey_1000</item>
+        <item name="android:textColor">@color/black</item>
+
+    </style>
+    <style name="note_des_hint">
+        <item name="android:textColorHint">@color/grey_500</item>
+        <item name="android:textColor">@color/black_200</item>
+        <item name="android:inputType">textMultiLine|textVisiblePassword</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+    </style>
+    <style name="bk_btn_bg">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="bk_btn_arrow">
+        <item name="android:backgroundTint">@color/black</item>
+    </style>
+
 </resources>

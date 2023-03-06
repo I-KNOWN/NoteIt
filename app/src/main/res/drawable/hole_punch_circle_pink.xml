@@ -11,7 +11,7 @@
         <inset android:inset="4dp">
             <shape android:shape="rectangle">
                 <corners android:radius="800dp"/>
-                <solid android:color="@color/pink_100"/>
+                <solid android:color="@color/pink_note"/>
             </shape>
         </inset>
     </item>

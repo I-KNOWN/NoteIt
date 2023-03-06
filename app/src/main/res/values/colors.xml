@@ -13,6 +13,7 @@
     <color name="grey_100">#DEDEDE</color>
     <color name="grey_600">#E7E7E7</color>
     <color name="mtrl_textinput_default_box_stroke_color">#DDDDDD</color>
+    <color name="grey_2000">#6A6A6A</color>
     <color name="grey_200">#DDDDDD</color>
     <color name="grey_300">#F5F5F5</color>
     <color name="grey_400">#AAAAAA</color>
@@ -38,7 +39,36 @@
     <color name="white_100">#F1F1F1</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="black_600">#50FFFFFF</color>
-
     <color name="grey_1100">#F4F4F4</color>
+
+
+<!--    Dark Theme-->
+<!--    Background-->
+    <color name="dark_background">#252525</color>
+    <color name="whiteish_back">#F4F4F4</color>
+    <color name="blakish_back">#3C3C3C</color>
+    <color name="white_200">#E8E8E8</color>
+    <color name="black_500">#191919</color>
+    <color name="style_back_light">#F1F1F1</color>
+    <color name="style_back_dark">#373737</color>
+    
+    
+<!--    Text Styles-->
+    <color name="white_text">#EEEEEE</color>
+    <color name="white_text2">#EAEAEA</color>
+    <color name="black_text">#313131</color>
+    <color name="white_text3">#C5C5C5</color>
+    <color name="black_text2">#8D8D8D</color>
+
+<!--    Stroke-->
+    <color name="darkish_stroke">#444444</color>
+
+<!--Note Color    -->
+    <color name="blue_note">#83C5EA</color>
+    <color name="green_note">#91EA83</color>
+    <color name="red_note">#EA8383</color>
+    <color name="yellow_note">#E8EA83</color>
+    <color name="purple_note">#C383EA</color>
+    <color name="pink_note">#EA83C0</color>
 
 </resources>

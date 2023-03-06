@@ -4,4 +4,5 @@
     <string name="facebook_app_id">1388729575287923</string>
     <string name="fb_login_protocol_scheme">fb1388729575287923</string>
     <string name="facebook_client_token">2700e87f02d2c431379157e7e18a37e9</string>
+    <string name="Underline_text"><u>U</u></string>
 </resources>

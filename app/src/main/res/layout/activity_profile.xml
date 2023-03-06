@@ -182,17 +182,18 @@
                             android:id="@+id/icon_delete"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:backgroundTint="#FFE2E0"
+                            android:backgroundTint="#434FD5F7"
                             app:cardCornerRadius="100dp"
                             app:cardElevation="0dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/delete" />
+                                android:rotation="-20"
+                                android:src="@drawable/ic_pin_push" />
                         </androidx.cardview.widget.CardView>
 
                         <androidx.constraintlayout.widget.ConstraintLayout

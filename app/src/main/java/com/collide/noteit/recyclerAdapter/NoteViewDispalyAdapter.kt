@@ -40,6 +40,9 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
         holder.title.text = note.title
         var data_note_et = note.edit_text_data_all!!.split("|&@!~~~|")
 
+
+        Log.d("editable_binding_html", data_note_et[0])
+
         holder.des.text = Html.fromHtml(data_note_et[0],   Html.FROM_HTML_MODE_COMPACT)
         Log.d("Data-note","desc: "+ data_note_et[0])
         Log.d("image_url",""+holder.des)
@@ -52,20 +55,13 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
                 holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_red)
 
             }
-            "cyan" ->{
-                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
 
-            }
-            "dblue" ->{
-                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
-
-            }
             "green" ->{
                 holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_green)
 
             }
-            "orange" ->{
-                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_orange)
+            "yellow" ->{
+                holder.punch_hole.setBackgroundResource(R.drawable.hole_punch_circle_yellow)
 
             }
             "pink" ->{
@@ -89,7 +85,6 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.imagebox)
             holder.imagebox.visibility = ImageView.VISIBLE
-
 //            var data = note.image_URL!!.split("|")
 //            var path_string = data[0]
 //            Log.d("data",""+path_string)
@@ -120,8 +115,6 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
     class ViewHolder(itemview: View, noteInterface: onNoteListener): RecyclerView.ViewHolder(itemview) {
         var title: TextView
         var des: TextView
-        var tag1: TextView
-        var tag2: TextView
         var main_box: LinearLayout
         var imagebox: ImageView
         var punch_hole: ImageView
@@ -129,8 +122,6 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
         init{
             title = itemView.findViewById(R.id.note_title)
             des = itemView.findViewById(R.id.note_desc)
-            tag1 = itemView.findViewById(R.id.tag1)
-            tag2 = itemView.findViewById(R.id.tag2)
             main_box = itemView.findViewById(R.id.main_box)
             imagebox = itemView.findViewById(R.id.imagecard)
             punch_hole = itemView.findViewById(R.id.punch_hole)

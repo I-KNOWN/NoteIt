@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    style="@style/SCREEN"
     android:padding="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,36 +19,52 @@
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchView"
-            style="@style/Widget.AppCompat.Light.SearchView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/search_border_transition_drawable"
+            android:layout_marginEnd="10dp"
+            style="@style/AppSearchView"
             android:paddingStart="5dp"
             app:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_camera"
+            app:layout_constraintEnd_toStartOf="@+id/btn_camera_main"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:queryBackground="@null"
+
             app:queryHint="Search.." />
 
-        <ImageView
-            android:id="@+id/btn_camera"
-            android:layout_width="28dp"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btn_camera_main"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_camera_outline"
-            android:layout_marginEnd="12dp"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="100dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
             app:layout_constraintEnd_toStartOf="@+id/materialCardView"
-            app:layout_constraintTop_toTopOf="@+id/materialCardView" />
+            app:layout_constraintTop_toTopOf="@+id/materialCardView">
+            <ImageView
+                android:id="@+id/btn_camera"
+                android:layout_width="38dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+
+                android:src="@drawable/ic_camera_outline"
+                style="@style/filter_ripple"
+                android:padding="5dp"
+                android:clickable="true"
+
+                />
+        </androidx.cardview.widget.CardView>
+
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:backgroundTint="@color/grey_1100"
             app:cardCornerRadius="100dp"
+            style="@style/profile_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -77,8 +94,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_bold"
+            style="@style/TEXT"
             android:text="Notes"
-            android:textColor="@color/black"
             android:textSize="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -88,7 +105,7 @@
             android:id="@+id/filter"
             android:layout_width="110dp"
             android:layout_height="30dp"
-            android:background="@drawable/filter_btn_rounded"
+            style="@style/filer_back"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +115,7 @@
                 android:id="@+id/imageView3"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/filter_dark"
+                style="@style/filter_icon"
                 android:layout_marginRight="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/filter_text"
                 app:layout_constraintEnd_toStartOf="@+id/filter_text"
@@ -113,9 +130,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Filters"
-                android:textColor="#4F4F4F"
+                style="@style/TEXT"
                 android:textSize="15dp"
-                android:fontFamily="@font/montserrat_bold"
+                android:fontFamily="@font/montserrat_semibold"
 
                 android:includeFontPadding="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -166,11 +183,12 @@
                 android:layout_marginTop="10dp"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
+                android:transitionName="RP"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/constraintLayout"
-                android:transitionName="RP"
                 tools:listitem="@layout/note_box_layout" />
+
             <TextView
                 android:id="@+id/tv_unpin"
                 android:layout_width="wrap_content"
@@ -179,7 +197,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:layout_marginTop="18dp"
                 android:layout_marginBottom="10dp"
-                android:textColor="@color/black"
+                style="@style/TEXT"
                 android:textSize="16dp"
                 android:text="Notes"/>
             <androidx.recyclerview.widget.RecyclerView
@@ -208,11 +226,12 @@
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/rounded_options_black"
         android:paddingStart="20dp"
+        style="@style/option_back"
         android:paddingTop="15dp"
         android:paddingEnd="20dp"
         android:paddingBottom="15dp"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -223,7 +242,7 @@
             android:id="@+id/add_note_btn"
             android:layout_width="35dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_rounded_plus4"
+            style="@style/add_note_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -2,6 +2,7 @@ package com.collide.noteit
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.opengl.Visibility
@@ -136,7 +137,16 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
 
 
+        when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                binding.searchView.background = ContextCompat.getDrawable(this, R.drawable.search_border_transition_drawable_dark)
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                binding.searchView.background = ContextCompat.getDrawable(this, R.drawable.search_border_transition_drawable)
 
+            }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+        }
 
 
 
@@ -251,6 +261,9 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         })
 
         binding.searchView.setOnQueryTextFocusChangeListener { view, b ->
+
+
+
             var transition: TransitionDrawable = view.background as TransitionDrawable
             if(b == true){
                 transition.startTransition(300)
@@ -259,7 +272,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             }
         }
 
-        binding.addNoteBtn.setOnClickListener {
+        binding.optionLayout.setOnClickListener {
             val intent = Intent(this, Note_Activity::class.java)
             startActivity(intent)
         }
@@ -294,6 +307,9 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         var btn_red = filterbottomSheetDialog.findViewById<ImageView>(R.id.red_btn)
         btn_red?.setOnClickListener {
+
+            setCurrrentRecycler()
+
             filtericonitem("red")
             filterbottomSheetDialog.dismiss()
 
@@ -302,49 +318,56 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         var btn_blue = filterbottomSheetDialog.findViewById<ImageView>(R.id.blue_btn)
         btn_blue?.setOnClickListener {
+            setCurrrentRecycler()
+
             filtericonitem("blue")
-            filterbottomSheetDialog.dismiss()
-            iconfilter_bool = true
-        }
-        var btn_cyan = filterbottomSheetDialog.findViewById<ImageView>(R.id.cyan_btn)
-        btn_cyan?.setOnClickListener {
-            filtericonitem("cyan")
-            filterbottomSheetDialog.dismiss()
-            iconfilter_bool = true
-        }
-        var btn_dblue = filterbottomSheetDialog.findViewById<ImageView>(R.id.dblue_btn)
-        btn_dblue?.setOnClickListener {
-            filtericonitem("dblue")
             filterbottomSheetDialog.dismiss()
             iconfilter_bool = true
         }
         var btn_green = filterbottomSheetDialog.findViewById<ImageView>(R.id.green_btn)
         btn_green?.setOnClickListener {
+            setCurrrentRecycler()
+
             filtericonitem("green")
-            filterbottomSheetDialog.dismiss()
-            iconfilter_bool = true
-        }
-        var btn_orange = filterbottomSheetDialog.findViewById<ImageView>(R.id.orange_btn)
-        btn_orange?.setOnClickListener {
-            filtericonitem("orange")
             filterbottomSheetDialog.dismiss()
             iconfilter_bool = true
         }
         var btn_pink = filterbottomSheetDialog.findViewById<ImageView>(R.id.pink_btn)
         btn_pink?.setOnClickListener {
+            setCurrrentRecycler()
+
             filtericonitem("pink")
             filterbottomSheetDialog.dismiss()
             iconfilter_bool = true
         }
         var btn_purple = filterbottomSheetDialog.findViewById<ImageView>(R.id.purple_btn)
         btn_purple?.setOnClickListener {
+
+            setCurrrentRecycler()
             filtericonitem("purple")
+            filterbottomSheetDialog.dismiss()
+            iconfilter_bool = true
+        }
+        var btn_yellow = filterbottomSheetDialog.findViewById<ImageView>(R.id.yellow_btn)
+        btn_yellow?.setOnClickListener {
+            setCurrrentRecycler()
+            filtericonitem("yellow")
             filterbottomSheetDialog.dismiss()
             iconfilter_bool = true
         }
 
         filterbottomSheetDialog.show()
 
+    }
+
+    private fun setCurrrentRecycler() {
+        if(current_query_string != ""){
+            notedisplayadapterunpinned.setFilteredList(filteredLIst_unpin)
+            notedisplayadapterpinned.setFilteredList(filteredLIst_pinned)
+        } else{
+            notedisplayadapterunpinned.setFilteredList(noteArrayListUnpinned)
+            notedisplayadapterpinned.setFilteredList(noteArrayListPinned)
+        }
     }
 
     private fun filtericonitem(s: String) {

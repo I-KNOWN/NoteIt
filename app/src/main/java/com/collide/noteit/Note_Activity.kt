@@ -3,6 +3,7 @@ package com.collide.noteit
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
@@ -11,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.*
+import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
@@ -22,8 +24,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.getSpans
 import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -334,20 +338,8 @@ class Note_Activity : AppCompatActivity() {
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
 
             }
-            "cyan" ->{
-                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
-
-            }
-            "dblue" ->{
-                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
-
-            }
             "green" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_green)
-
-            }
-            "orange" ->{
-                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_orange)
 
             }
             "pink" ->{
@@ -356,6 +348,10 @@ class Note_Activity : AppCompatActivity() {
             }
             "purple" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_purple)
+
+            }
+            "yellow" ->{
+                binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_yellow)
 
             }
         }
@@ -553,41 +549,57 @@ class Note_Activity : AppCompatActivity() {
         dialog_style.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog_style.setContentView(R.layout.bottom_sheet_layout_dialog)
 
-        var add_image = dialog_style.findViewById<LinearLayout>(R.id.Layout_add_image)
+        var add_image = dialog_style.findViewById<TextView>(R.id.Layout_add_image)
         add_image?.setOnClickListener {
             if(connectivity == "Available"){
                 gallery_intent()
             }
         }
 
-        var select_bold = dialog_style.findViewById<AppCompatButton>(R.id.btn_Bold)
+        var select_bold = dialog_style.findViewById<CardView>(R.id.btn_Bold)
         select_bold?.setOnClickListener {
             setBold()
         }
 
-        var select_italic = dialog_style.findViewById<AppCompatButton>(R.id.btn_italic)
+        var select_italic = dialog_style.findViewById<CardView>(R.id.btn_italic)
         select_italic?.setOnClickListener {
             setItalic()
         }
 
-        var select_underline = dialog_style.findViewById<AppCompatButton>(R.id.btn_underline)
+        var select_underline = dialog_style.findViewById<CardView>(R.id.btn_underline)
         select_underline?.setOnClickListener {
             setUnderline()
+        }
+
+        var btn_rmv = dialog_style.findViewById<ImageView>(R.id.blank_btn)
+        btn_rmv?.setOnClickListener {
+            resetColor()
         }
 
         var btn_red = dialog_style.findViewById<ImageView>(R.id.red_btn)
         btn_red?.setOnClickListener {
             setColor_red()
         }
-
         var btn_blue = dialog_style.findViewById<ImageView>(R.id.blue_btn)
         btn_blue?.setOnClickListener {
             setColor_blue()
         }
+        var btn_yellow = dialog_style.findViewById<ImageView>(R.id.yellow_btn)
+        btn_yellow?.setOnClickListener {
+            setColor_yellow()
+        }
 
-        var btn_cyan = dialog_style.findViewById<ImageView>(R.id.cyan_btn)
-        btn_cyan?.setOnClickListener {
-            setColor_cyan()
+        var btn_pink = dialog_style.findViewById<ImageView>(R.id.pink_btn)
+        btn_pink?.setOnClickListener {
+            setColor_pink()
+        }
+        var btn_purple = dialog_style.findViewById<ImageView>(R.id.purple_btn)
+        btn_purple?.setOnClickListener {
+            setColor_purple()
+        }
+        var btn_green = dialog_style.findViewById<ImageView>(R.id.green_btn)
+        btn_green?.setOnClickListener {
+            setColor_green()
         }
 
         dialog_style.show()
@@ -615,16 +627,11 @@ class Note_Activity : AppCompatActivity() {
             note_color_hole = "blue"
             dialog_color.cancel()
         }
-        var btn_cyan = dialog_color.findViewById<ImageView>(R.id.cyan_btn)
-        btn_cyan?.setOnClickListener {
-            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_cyan)
-            note_color_hole = "cyan"
-            dialog_color.cancel()
-        }
-        var btn_dblue = dialog_color.findViewById<ImageView>(R.id.dblue_btn)
+
+        var btn_dblue = dialog_color.findViewById<ImageView>(R.id.yellow_btn)
         btn_dblue?.setOnClickListener {
-            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_dblue)
-            note_color_hole = "dblue"
+            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_yellow)
+            note_color_hole = "yellow"
             dialog_color.cancel()
         }
         var btn_green = dialog_color.findViewById<ImageView>(R.id.green_btn)
@@ -633,12 +640,7 @@ class Note_Activity : AppCompatActivity() {
             note_color_hole = "green"
             dialog_color.cancel()
         }
-        var btn_orange = dialog_color.findViewById<ImageView>(R.id.orange_btn)
-        btn_orange?.setOnClickListener {
-            binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_orange)
-            note_color_hole = "orange"
-            dialog_color.cancel()
-        }
+
         var btn_pink = dialog_color.findViewById<ImageView>(R.id.pink_btn)
         btn_pink?.setOnClickListener {
             binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_pink)
@@ -1174,13 +1176,15 @@ class Note_Activity : AppCompatActivity() {
     private fun setColor_red() {
         dialog_style.cancel()
 
+
+
         if(binding.layoutLinearAdder.focusedChild is EditText ||
                 binding.layoutLinearAdder.focusedChild is AppCompatEditText){
             if(binding.layoutLinearAdder.focusedChild is EditText){
                 var childview = binding.layoutLinearAdder.focusedChild as EditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.RED),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#EA8383")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1194,7 +1198,7 @@ class Note_Activity : AppCompatActivity() {
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#EA8383")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1208,6 +1212,21 @@ class Note_Activity : AppCompatActivity() {
 
 //        Log.d("Spannable", ""+spannable_html)
     }
+
+    private fun resetColor() {
+        var childview = binding.layoutLinearAdder.focusedChild as EditText
+        var spanna = childview.text
+        var spantoRemove = spanna.getSpans<ForegroundColorSpan>(childview.selectionStart, childview.selectionEnd)
+
+        for(span in spantoRemove){
+            Log.d("Sapntoremove","${span}")
+            if(span is CharacterStyle){
+                spanna.removeSpan(span)
+            }
+        }
+
+    }
+
     private fun setColor_blue() {
         dialog_style.cancel()
 
@@ -1217,7 +1236,7 @@ class Note_Activity : AppCompatActivity() {
                 var childview = binding.layoutLinearAdder.focusedChild as EditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#83C5EA")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1231,7 +1250,7 @@ class Note_Activity : AppCompatActivity() {
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#83C5EA")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1246,7 +1265,7 @@ class Note_Activity : AppCompatActivity() {
 //        Log.d("Spannable", ""+spannable_html)
     }
 
-    private fun setColor_cyan() {
+    private fun setColor_green() {
         dialog_style.cancel()
 
         if(binding.layoutLinearAdder.focusedChild is EditText ||
@@ -1255,7 +1274,7 @@ class Note_Activity : AppCompatActivity() {
                 var childview = binding.layoutLinearAdder.focusedChild as EditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.CYAN),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#91EA83")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1269,7 +1288,7 @@ class Note_Activity : AppCompatActivity() {
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(ForegroundColorSpan(Color.BLUE),
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#91EA83")),
                         childview.selectionStart,
                         childview.selectionEnd,
                         0
@@ -1283,6 +1302,119 @@ class Note_Activity : AppCompatActivity() {
 
 //        Log.d("Spannable", ""+spannable_html)
     }
+
+    private fun setColor_yellow() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#E8EA83")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#E8EA83")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+//        Log.d("Spannable", ""+spannable_html)
+    }
+    private fun setColor_purple() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#C383EA")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#C383EA")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+//        Log.d("Spannable", ""+spannable_html)
+    }
+    private fun setColor_pink() {
+        dialog_style.cancel()
+
+        if(binding.layoutLinearAdder.focusedChild is EditText ||
+            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            if(binding.layoutLinearAdder.focusedChild is EditText){
+                var childview = binding.layoutLinearAdder.focusedChild as EditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#EA83C0")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
+                if(childview.hasSelection()){
+                    spannableString = SpannableStringBuilder(childview.text)
+                    spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#EA83C0")),
+                        childview.selectionStart,
+                        childview.selectionEnd,
+                        0
+                    )
+                    childview.setText(spannableString)
+                }else{
+                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+//        Log.d("Spannable", ""+spannable_html)
+    }
+
 
     private fun uploadPhotos(desc: String) {
 
