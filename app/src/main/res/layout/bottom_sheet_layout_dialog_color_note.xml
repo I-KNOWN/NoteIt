@@ -7,7 +7,7 @@
     android:paddingTop="10dp"
     android:paddingStart="30dp"
     android:paddingEnd="30dp"
-    android:background="@color/white">
+    style="@style/filter_dialog_bg">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/slider"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_semibold"
         android:text="Note Colour"
-        android:textColor="#454545"
+        style="@style/TEXT"
         android:textSize="10sp"
         android:layout_marginTop="25dp"
         android:textAllCaps="true"

@@ -4,16 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -23,9 +24,9 @@ import androidx.core.content.ContextCompat
 import com.collide.noteit.databinding.ActivityCameraBinding
 import com.collide.noteit.tools.loadingDialog
 import java.io.File
-import java.lang.invoke.ConstantCallSite
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class CameraActivity : AppCompatActivity() {
 
@@ -38,8 +39,21 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var cameraProvider: ProcessCameraProvider
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                binding.materialCardView.setBackgroundResource(R.drawable.top_only_rounded_cardview_dark)
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                binding.materialCardView.setBackgroundResource(R.drawable.top_only_rounded_cardview)
+
+            }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+        }
+
         sp = getSharedPreferences("Camera_Pref", Context.MODE_PRIVATE)
         Log.d("CameraActivity","${sp.getString("photo_URI", "")}")
         if(sp.getString("photo_URI", "") != ""){

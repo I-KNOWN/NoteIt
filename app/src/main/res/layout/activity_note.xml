@@ -130,16 +130,17 @@
 <!--                android:textSize="10dp"-->
 <!--                app:layout_constraintLeft_toLeftOf="parent"-->
 <!--                app:layout_constraintTop_toBottomOf="@+id/et_title" />-->
+
             <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingStart="25dp"
                 android:paddingEnd="25dp"
-                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_title"
-                >
+                app:layout_constraintTop_toBottomOf="@+id/et_title">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/parentofparent"
@@ -149,10 +150,13 @@
                     android:clipToPadding="false"
                     android:visibility="gone"
                     app:cardElevation="0dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="6dp"
+                    android:backgroundTint="@color/transparent"
+                    app:layout_constraintBottom_toTopOf="@id/layout_linear_adder"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/layout_linear_adder">
+                    app:layout_constraintTop_toTopOf="parent">
 
 
                     <androidx.cardview.widget.CardView
@@ -162,6 +166,7 @@
                         android:clipToPadding="true"
                         app:cardCornerRadius="9dp"
                         app:cardElevation="0dp"
+                        android:backgroundTint="@color/transparent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -173,19 +178,10 @@
                             android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
                             android:src="@drawable/test_image"
-                            android:visibility="gone" />
+                            android:visibility="visible" />
                     </androidx.cardview.widget.CardView>
 
-                    <ImageButton
-                        android:id="@+id/image_delete_note"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="right|bottom"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/rounded_delete_btn"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
@@ -200,40 +196,40 @@
 
                     <EditText
                         android:id="@+id/et_desc"
+                        style="@style/note_des_hint"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
                         android:background="@null"
                         android:backgroundTintMode="src_over"
                         android:fontFamily="@font/montserrat"
                         android:hint="Desc"
                         android:lineHeight="25dp"
-                        android:layout_marginTop="3dp"
                         android:paddingBottom="100dp"
-                        style="@style/note_des_hint"
                         android:textCursorDrawable="@drawable/cursor"
                         android:textSize="18dp" />
 
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="horizontal"-->
-<!--                        android:gravity="center_vertical"-->
-<!--                        android:paddingStart="10dp">-->
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/ic_rounded_plus_grey"-->
-<!--                            />-->
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="Add Task"-->
-<!--                            android:fontFamily="@font/montserrat_semibold"-->
-<!--                            android:textColor="@color/grey_400"-->
-<!--                            android:textSize="15sp"-->
-<!--                            android:layout_marginLeft="5dp"-->
-<!--                            />-->
-<!--                    </LinearLayout>-->
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:orientation="horizontal"-->
+                    <!--                        android:gravity="center_vertical"-->
+                    <!--                        android:paddingStart="10dp">-->
+                    <!--                        <ImageView-->
+                    <!--                            android:layout_width="20dp"-->
+                    <!--                            android:layout_height="20dp"-->
+                    <!--                            android:src="@drawable/ic_rounded_plus_grey"-->
+                    <!--                            />-->
+                    <!--                        <TextView-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:text="Add Task"-->
+                    <!--                            android:fontFamily="@font/montserrat_semibold"-->
+                    <!--                            android:textColor="@color/grey_400"-->
+                    <!--                            android:textSize="15sp"-->
+                    <!--                            android:layout_marginLeft="5dp"-->
+                    <!--                            />-->
+                    <!--                    </LinearLayout>-->
 
                 </LinearLayout>
             </LinearLayout>
@@ -245,6 +241,31 @@
 <!--                app:layout_constraintRight_toRightOf="parent"-->
 <!--                app:layout_constraintLeft_toLeftOf="parent"/>-->
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/image_delete_note"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout2"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                android:visibility="gone"
+                android:foregroundGravity="center"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:src="@drawable/rounded_delete_btn"
+                    android:text="X"
+                     />
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -12,11 +12,11 @@
     <color name="black_400">#393939</color>
     <color name="grey_100">#DEDEDE</color>
     <color name="grey_600">#E7E7E7</color>
-    <color name="mtrl_textinput_default_box_stroke_color">#DDDDDD</color>
+
     <color name="grey_2000">#6A6A6A</color>
     <color name="grey_200">#DDDDDD</color>
     <color name="grey_300">#F5F5F5</color>
-    <color name="grey_400">#AAAAAA</color>
+    <color name="grey_400" tools:override="true">#AAAAAA</color>
     <color name="grey_900">#999999</color>
     <color name="grey_1000">#767676</color>
     <color name="grey_500">#828282</color>
@@ -51,7 +51,8 @@
     <color name="black_500">#191919</color>
     <color name="style_back_light">#F1F1F1</color>
     <color name="style_back_dark">#373737</color>
-    
+    <color name="black_700">#363636</color>
+    <color name="white_300">#F2F2F2</color>
     
 <!--    Text Styles-->
     <color name="white_text">#EEEEEE</color>
@@ -59,6 +60,10 @@
     <color name="black_text">#313131</color>
     <color name="white_text3">#C5C5C5</color>
     <color name="black_text2">#8D8D8D</color>
+    <color name="blue_light">#326DC5</color>
+    <color name="blue_dark">#6D98D8</color>
+    <color name="black_text3">#AAAAAA</color>
+    <color name="white_text4">#C9C9C9</color>
 
 <!--    Stroke-->
     <color name="darkish_stroke">#444444</color>

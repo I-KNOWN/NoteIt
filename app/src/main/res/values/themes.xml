@@ -26,6 +26,9 @@
     <style name="SCREEN" >
         <item name="android:background">@color/white</item>
     </style>
+    <style name="SCREEN2" >
+        <item name="android:background">@color/white</item>
+    </style>
     <style name="TEXT">
         <item name="android:textColor">@color/black</item>
     </style>
@@ -34,6 +37,12 @@
     </style>
     <style name="TEXT3">
         <item name="android:textColor">@color/black_text2</item>
+    </style>
+    <style name="TEXT4">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TEXT5">
+        <item name="android:textColor">@color/black_text3</item>
     </style>
     <style name="filer_back">
         <item name="android:background">@drawable/filter_btn_rounded</item>
@@ -105,5 +114,40 @@
     <style name="bk_btn_arrow">
         <item name="android:backgroundTint">@color/black</item>
     </style>
-
+    <style name="email_btn">
+        <item name="android:textColor">@color/blue_light</item>
+    </style>
+    <style name="login_btn">
+        <item name="android:background">@color/black_100</item>
+    </style>
+    <style name="login_btn_arrow">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="input_et" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="fontFamily">@font/montserrat_italic</item>
+        <item name="hintTextAppearance">@style/TextLabel</item>
+        <item name="hintTextColor">@color/black_text3</item>
+        <item name="boxStrokeWidth">1.5dp</item>
+        <item name="boxCornerRadiusBottomEnd">100dp</item>
+        <item name="boxCornerRadiusBottomStart">100dp</item>
+        <item name="boxCornerRadiusTopEnd">100dp</item>
+        <item name="boxCornerRadiusTopStart">100dp</item>
+        <item name="boxBackgroundColor">@color/grey_300</item>
+        <item name="boxStrokeColor">@color/edit_text_box_border</item>
+    </style>
+    <style name="app_logo">
+        <item name="android:src">@drawable/app_logo</item>
+    </style>
+    <style name="chkbox_tint">
+        <item name="android:buttonTint">@color/blakish_back</item>
+    </style>
+    <style name="cmaera_capture">
+        <item name="android:background">@drawable/rounded_capture_double_circle</item>
+    </style>
+    <style name="bk_txt">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="bk_arrow">
+        <item name="android:backgroundTint">@color/black</item>
+    </style>
 </resources>

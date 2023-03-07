@@ -4,12 +4,14 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.*
 import android.text.style.CharacterStyle
@@ -26,6 +28,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.getSpans
 import androidx.core.view.*
@@ -50,6 +53,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.checkerframework.common.subtyping.qual.Bottom
+import java.io.File
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,6 +74,7 @@ class Note_Activity : AppCompatActivity() {
         lateinit var instance: Note_Activity
         var connectivity = ""
     }
+    private lateinit var camera_uri: Uri
     var image_changed = false
     val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
     var note_id: String = ""
@@ -134,7 +140,7 @@ class Note_Activity : AppCompatActivity() {
         binding.imageDeleteNote.setOnClickListener {
             binding.imageDeleteNote.visibility = ViewGroup.GONE
             binding.imageViewNote.visibility = ViewGroup.GONE
-            binding.parentofparent.visibility = ViewGroup.INVISIBLE
+            binding.parentofparent.visibility = ViewGroup.GONE
             imageUri = ""
 
 
@@ -549,10 +555,12 @@ class Note_Activity : AppCompatActivity() {
         dialog_style.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog_style.setContentView(R.layout.bottom_sheet_layout_dialog)
 
+
         var add_image = dialog_style.findViewById<TextView>(R.id.Layout_add_image)
         add_image?.setOnClickListener {
             if(connectivity == "Available"){
-                gallery_intent()
+                    gallery_intent()
+                dialog_style.dismiss()
             }
         }
 
@@ -568,7 +576,7 @@ class Note_Activity : AppCompatActivity() {
 
         var select_underline = dialog_style.findViewById<CardView>(R.id.btn_underline)
         select_underline?.setOnClickListener {
-            setUnderline()
+            removeformat()
         }
 
         var btn_rmv = dialog_style.findViewById<ImageView>(R.id.blank_btn)
@@ -578,27 +586,38 @@ class Note_Activity : AppCompatActivity() {
 
         var btn_red = dialog_style.findViewById<ImageView>(R.id.red_btn)
         btn_red?.setOnClickListener {
+            resetColor()
             setColor_red()
         }
         var btn_blue = dialog_style.findViewById<ImageView>(R.id.blue_btn)
         btn_blue?.setOnClickListener {
+            resetColor()
+
             setColor_blue()
         }
         var btn_yellow = dialog_style.findViewById<ImageView>(R.id.yellow_btn)
         btn_yellow?.setOnClickListener {
+            resetColor()
+
             setColor_yellow()
         }
 
         var btn_pink = dialog_style.findViewById<ImageView>(R.id.pink_btn)
         btn_pink?.setOnClickListener {
+            resetColor()
+
             setColor_pink()
         }
         var btn_purple = dialog_style.findViewById<ImageView>(R.id.purple_btn)
         btn_purple?.setOnClickListener {
+            resetColor()
+
             setColor_purple()
         }
         var btn_green = dialog_style.findViewById<ImageView>(R.id.green_btn)
         btn_green?.setOnClickListener {
+            resetColor()
+
             setColor_green()
         }
 
@@ -608,6 +627,7 @@ class Note_Activity : AppCompatActivity() {
         dialog_style.window!!.attributes.windowAnimations = R.style.DialogAnimationStyle
         dialog_style.window!!.setGravity(Gravity.BOTTOM)
     }
+
 
     private fun showDialogColor(){
         dialog_color = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
@@ -691,6 +711,16 @@ class Note_Activity : AppCompatActivity() {
     private fun saveNote() {
 
         Log.d("Here","inside")
+
+        if(binding.etTitle.text.isEmpty() && binding.etDesc.text.isEmpty()){
+            val intent = Intent(this@Note_Activity, MainActivity::class.java)
+            startActivity(intent)
+        }
+        if(binding.etTitle.text.isNotEmpty() && binding.etDesc.text.isEmpty()){
+            val intent = Intent(this@Note_Activity, MainActivity::class.java)
+            startActivity(intent)
+        }
+
         if (binding.etTitle.text.isNotEmpty() && binding.etDesc.text.isNotEmpty()) {
             Log.d("Here","inside")
             var layout = findViewById<LinearLayout>(R.id.layout_linear_adder)
@@ -872,41 +902,17 @@ class Note_Activity : AppCompatActivity() {
 //        Log.d("Data","ETCheckbox Data: "+task_data_all.split("|&@!~~~|"))
     }
 
-    private fun setUnderline() {
+    private fun removeformat() {
         dialog_style.cancel()
 
-        if(binding.layoutLinearAdder.focusedChild is EditText ||
-            binding.layoutLinearAdder.focusedChild is AppCompatEditText){
-            if(binding.layoutLinearAdder.focusedChild is EditText){
-                var childview = binding.layoutLinearAdder.focusedChild as EditText
-                if(childview.hasSelection()){
+        var childview = binding.layoutLinearAdder.focusedChild as EditText
+        var spanna = childview.text
+        var spantoRemove = spanna.getSpans<StyleSpan>(childview.selectionStart, childview.selectionEnd)
 
-                    spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(UnderlineSpan(),
-                        childview.selectionStart,
-                        childview.selectionEnd,
-                        0
-                    )
-
-                    childview.setText(spannableString)
-                }else{
-                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
-                }
-            }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
-                var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
-                if(childview.hasSelection()){
-
-                    spannableString = SpannableStringBuilder(childview.text)
-                    spannableString.setSpan(UnderlineSpan(),
-                        childview.selectionStart,
-                        childview.selectionEnd,
-                        0
-                    )
-                    childview.setText(spannableString)
-                }else{
-                    Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
-                }
+        for(span in spantoRemove){
+            Log.d("Sapntoremove","${span}")
+            if(span is CharacterStyle){
+                spanna.removeSpan(span)
             }
         }
     }
@@ -1484,13 +1490,12 @@ class Note_Activity : AppCompatActivity() {
 //            photos.add(photo)
 
             imageUri = uri.toString()
-
+            Log.d("camera_intent_uri","$imageUri")
             binding.imageViewNote.setImageURI(uri)
             image_changed = true
             Log.d("uir",""+binding.imageViewNote)
         }
     }
-
 
 
 }

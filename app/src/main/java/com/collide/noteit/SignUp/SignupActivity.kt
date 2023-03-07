@@ -2,6 +2,7 @@ package com.collide.noteit.SignUp
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -50,8 +51,17 @@ class SignupActivity : AppCompatActivity() {
                 binding.txtEmail.setEndIconDrawable(R.drawable.ic_check)
             }
             else{
-                binding.txtEmail.setEndIconTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red_100)))
-                binding.txtEmail.setEndIconDrawable(R.drawable.ic_error)
+                when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        binding.txtEmail.setEndIconTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red_note)))
+                        binding.txtEmail.setEndIconDrawable(R.drawable.ic_error)
+                    }
+                    Configuration.UI_MODE_NIGHT_NO -> {
+                        binding.txtEmail.setEndIconTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red_100)))
+                        binding.txtEmail.setEndIconDrawable(R.drawable.ic_error)
+                    }
+                    Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+                }
             }
 
         }
