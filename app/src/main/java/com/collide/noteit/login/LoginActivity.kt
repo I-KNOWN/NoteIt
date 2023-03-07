@@ -191,16 +191,16 @@ class LoginActivity : AppCompatActivity() {
         LoginManager.getInstance().registerCallback(callbackManager, object :
             FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                Log.d("User", "facebook:onSuccess:$loginResult")
+                Log.d("User_login_fab", "facebook:onSuccess:$loginResult")
                 handleFacebookAccessToken(loginResult.accessToken)
             }
             override fun onCancel() {
                 loadingDialog.isDismis()
-                Log.d("User", "facebook:onCancel")
+                Log.d("User_login_fab", "facebook:onCancel")
             }
             override fun onError(error: FacebookException) {
                 loadingDialog.isDismis()
-                Log.d("User", "facebook:onError", error)
+                Log.d("User_login_fab", "facebook:onError", error)
             }
         })
 
@@ -215,7 +215,12 @@ class LoginActivity : AppCompatActivity() {
             signIn()
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        // Pass the activity result back to the Facebook SDK
+        callbackManager.onActivityResult(requestCode, resultCode, data)
+    }
     private fun checkAndRequestPerm() {
         PermissionX.init(this)
             .permissions(Manifest.permission.CAMERA)
@@ -233,21 +238,21 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d("User", "handleFacebookAccessToken:$token")
+        Log.d("User_login_fab", "handleFacebookAccessToken:$token")
 
         val credential = FacebookAuthProvider.getCredential(token.token)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d("User", "signInWithCredential:success")
+                    Log.d("User_login_fab", "signInWithCredential:success")
                     val user = auth.currentUser!!
                     val firebaseUser = auth.currentUser
                     database.child("users")
                         .get()
                         .addOnSuccessListener {
                             if(!it.hasChild(firebaseUser!!.uid)){
-                                Log.d("User", "User Created")
+                                Log.d("User_login_fab", "User Created")
                                 userCreation(auth.currentUser!!, "FACEBOOK |")
                                 loadingDialog.isDismis()
                                 updateUI_avatar()
@@ -257,7 +262,7 @@ class LoginActivity : AppCompatActivity() {
                     updateUI_Facebook(user)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w("User", "signInWithCredential:failure", task.exception)
+                    Log.w("User_login_fab", "signInWithCredential:failure", task.exception)
                     Toast.makeText(baseContext, "You have previously logged in with another service provider.",
                         Toast.LENGTH_SHORT).show()
                     loadingDialog.isDismis()

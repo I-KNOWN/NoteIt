@@ -536,9 +536,11 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             firebaseDatabase.child(auth.currentUser!!.uid).child("profile_image")
                 .get()
                 .addOnSuccessListener {
+                    Log.d("profile_Icon_value",""+it.value.toString())
+
                     profile_Icon_value = it.value.toString().split("/")[1]
 
-                    Log.d("User",""+profile_Icon_value)
+                    Log.d("profile_Icon_value",""+profile_Icon_value)
 
                     when(profile_Icon_value){
                         "av1.png"->{

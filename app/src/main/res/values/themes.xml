@@ -42,7 +42,25 @@
         <item name="android:textColor">@color/white</item>
     </style>
     <style name="TEXT5">
-        <item name="android:textColor">@color/black_text3</item>
+        <item name="android:textColor">@color/black_100</item>
+    </style>
+    <style name="TEXT6">
+        <item name="android:textColor">@color/white_400</item>
+    </style>
+    <style name="Text7">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="Text8">
+        <item name="android:textColor">@color/grey_1000</item>
+    </style>
+    <style name="Text9">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TEXT10">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TEXT11">
+        <item name="android:textColor">@color/black_100</item>
     </style>
     <style name="filer_back">
         <item name="android:background">@drawable/filter_btn_rounded</item>
@@ -150,4 +168,50 @@
     <style name="bk_arrow">
         <item name="android:backgroundTint">@color/black</item>
     </style>
+    <style name="camera_btn">
+        <item name="backgroundTint">@color/black_800</item>
+    </style>
+    <style name="profile_bg">
+        <item name="android:background">@drawable/radial_gradient_profile_bg</item>
+    </style>
+    <style name="pen_bg">
+        <item name="cardBackgroundColor">@color/pen_light</item>
+    </style>
+    <style name="pen_icon">
+        <item name="android:backgroundTint">@color/pen_dark_</item>
+    </style>
+    <style name="profile_card_view">
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+    <style name="data_card">
+        <item name="android:backgroundTint">#EEF4F4</item>
+    </style>
+    <style name="icon_book_bg">
+        <item name="android:backgroundTint">#E0EDFF</item>
+    </style>
+    <style name="icon_pin_bg">
+        <item name="android:backgroundTint">#E0FFE2</item>
+    </style>
+    <style name="icon_tint">
+        <item name="android:backgroundTint">#4F8EEE</item>
+    </style>
+    <style name="icon_tint_pin">
+        <item name="android:backgroundTint">#4FC734</item>
+    </style>
+    <style name="theme_bg">
+        <item name="android:backgroundTint">@color/pen_light</item>
+    </style>
+    <style name="arrow_down">
+        <item name="android:backgroundTint">@color/black</item>
+    </style>
+    <style name="arrow_down_bg">
+        <item name="cardBackgroundColor">@color/pen_light_</item>
+    </style>
+    <style name="exit_btn">
+        <item name="cardBackgroundColor">@color/pen_light</item>
+    </style>
+    <style name="link_btn">
+        <item name="android:background">@drawable/link_btn_background_profile</item>
+    </style>
+
 </resources>

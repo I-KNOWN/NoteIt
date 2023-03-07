@@ -1,20 +1,21 @@
 package com.collide.noteit.tools
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.collide.noteit.MainActivity
 import com.collide.noteit.R
 import com.collide.noteit.SignUp.Avatar_Activity
-import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.dataClass.User_Profile_Detail
 import com.collide.noteit.databinding.ActivityProfileBinding
-import com.collide.noteit.databinding.ActivitySignupBinding
 import com.collide.noteit.login.LoginActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -35,7 +36,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso
+
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -69,6 +70,13 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            val w: Window = window
+            w.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+        }
         auth = FirebaseAuth.getInstance()
         firebaseDatabase = Firebase.database.reference
         // Getting Intent Data
@@ -273,13 +281,43 @@ class ProfileActivity : AppCompatActivity() {
         Log.d("testing_linking","Inside method LoginProvider")
         Log.d("testing_linking",""+ user_data.provider)
         if(user_data.provider!!.contains("GOOGLE")){
-            binding.googleTxt.text = "Linked"
-            binding.googleLinkBtn.alpha = 0.5f
+
+            when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    binding.googleTxt.text = "Linked"
+                    binding.googleTxt.setTextColor(resources.getColor(R.color.black_300, null))
+                    binding.googleLinkBtn.setBackgroundResource(R.drawable.link_btn_linked)
+                    binding.googleIcon.alpha = 0.3f
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    binding.googleTxt.text = "Linked"
+                    binding.googleLinkBtn.alpha = 0.3f
+
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+            }
             binding.googleLinkBtn.setOnClickListener(null)
+
+
         }
         if(user_data.provider!!.contains("FACEBOOK")){
-            binding.facebookTxt.text = "Linked"
-            binding.facebookLinkBtn.alpha = 0.5f
+            Log.d("testing_linking", "Facebook inside ")
+
+            when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    binding.facebookTxt.text = "Linked"
+                    binding.facebookTxt.setTextColor(resources.getColor(R.color.black_300, null))
+                    binding.facebookLinkBtn.setBackgroundResource(R.drawable.link_btn_linked)
+                    binding.fbLogo.alpha = 0.3f
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    binding.facebookTxt.text = "Linked"
+                    binding.facebookLinkBtn.alpha = 0.3f
+
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+            }
+
             binding.facebookLinkBtn.setOnClickListener(null)
         }
 
@@ -306,9 +344,23 @@ class ProfileActivity : AppCompatActivity() {
 
                     var data = user_data.provider+" FACEBOOK |"
                     firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
-                        .setValue(provider)
+                        .setValue(data)
+                    Firebase.database.getReference("users")
+                        .child(auth.uid.toString())
+                        .addValueEventListener(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                user_data = snapshot.getValue(User_Profile_Detail::class.java)!!
+                                Log.d("testing_linking", "${user_data.provider}")
+                                getLoginProvider()
 
-                    getLoginProvider()
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                TODO("Not yet implemented")
+                            }
+
+                        })
+
 
                 } else {
                     Log.w(TAG, "linkWithCredential:failure", task.exception)
@@ -351,13 +403,13 @@ class ProfileActivity : AppCompatActivity() {
                                 var data = user_data.provider+" GOOGLE |"
                                 firebaseDatabase.child("users").child(auth.currentUser!!.uid).child("provider")
                                     .setValue(data)
-
                                 Firebase.database.getReference("users")
                                     .child(auth.uid.toString())
                                     .addValueEventListener(object : ValueEventListener {
                                         override fun onDataChange(snapshot: DataSnapshot) {
                                             user_data = snapshot.getValue(User_Profile_Detail::class.java)!!
                                             getLoginProvider()
+
                                         }
 
                                         override fun onCancelled(error: DatabaseError) {

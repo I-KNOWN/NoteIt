@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="@color/white"/>
+            <solid android:color="@color/dark_background"/>
         </shape>
     </item>
 
@@ -13,7 +13,7 @@
                 android:centerY=".2"
                 android:endColor="#004f4f4f"
                 android:gradientRadius="1000"
-                android:startColor="#30FF8E8E"
+                android:startColor="#07FF8E8E"
 
                 android:type="radial" />
 
@@ -26,7 +26,7 @@
                 android:centerY=".5"
                 android:endColor="#004f4f4f"
                 android:gradientRadius="1000"
-                android:startColor="#307EFFFF"
+                android:startColor="#077EFFFF"
 
                 android:type="radial" />
 

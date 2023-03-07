@@ -1,6 +1,7 @@
 package com.collide.noteit
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +30,17 @@ class PreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                binding.materialCardView.setBackgroundResource(R.drawable.top_only_rounded_cardview_dark)
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                binding.materialCardView.setBackgroundResource(R.drawable.top_only_rounded_cardview)
+
+            }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+        }
 
         var struri = intent.getStringExtra("photo_url")
         var photouri = Uri.parse(struri)
