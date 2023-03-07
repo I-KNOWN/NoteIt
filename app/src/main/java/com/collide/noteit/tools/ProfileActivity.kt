@@ -1,7 +1,9 @@
 package com.collide.noteit.tools
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.collide.noteit.MainActivity
+import com.collide.noteit.Note_Activity
 import com.collide.noteit.R
 import com.collide.noteit.SignUp.Avatar_Activity
 import com.collide.noteit.dataClass.User_Profile_Detail
@@ -36,6 +39,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -94,6 +100,9 @@ class ProfileActivity : AppCompatActivity() {
 
         }
 
+        binding.cardView2.setOnClickListener {
+            readfile()
+        }
 
 
         Toast.makeText(this,"${intent.getStringExtra("change") != null}", Toast.LENGTH_LONG).show()
@@ -239,6 +248,34 @@ class ProfileActivity : AppCompatActivity() {
         binding.SignOut.setOnClickListener{
             auth.signOut()
             UpdateUI()
+        }
+    }
+
+    private fun readfile() {
+        var intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.setType("*/*")
+        galleryLauncher.launch(intent)
+    }
+
+    var galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == Activity.RESULT_OK){
+            var filepath =it.data!!.dataString
+            var uri = Uri.parse(filepath)
+            var reader: BufferedReader?
+            val builder = StringBuilder()
+            try {
+                reader = BufferedReader(InputStreamReader(contentResolver.openInputStream(uri)))
+                var line: String? = ""
+                while (reader.readLine().also { line = it } != null) {
+                    builder.append(line)
+                }
+                reader.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            var intent = Intent(this, Note_Activity::class.java)
+            intent.putExtra("note_data",builder.toString())
+            startActivity(intent)
         }
     }
 

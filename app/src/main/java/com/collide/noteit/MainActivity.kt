@@ -1,5 +1,6 @@
 package com.collide.noteit
 
+import android.content.ContentValues
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -9,8 +10,10 @@ import android.opengl.Visibility
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.os.VibratorManager
 import android.provider.ContactsContract.CommonDataKinds.Note
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -73,7 +76,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.firestore.v1.AggregationResult
 import com.google.gson.Gson
+import com.google.type.DateTime
 import com.squareup.picasso.Picasso
+import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -274,6 +280,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         binding.optionLayout.setOnClickListener {
             val intent = Intent(this, Note_Activity::class.java)
+            finish()
             startActivity(intent)
         }
 
@@ -652,7 +659,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         bottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_delete_pin)
-
+            var share_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.share_note)!!
+            share_btn.setOnClickListener {
+                var gson = Gson()
+                var note_gson = gson.toJson(note)
+                createData(note_gson, note.title)
+            }
         var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
         delete_btn.setOnClickListener {
             var note_id = note.note_id!!
@@ -725,7 +737,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
             bottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
             bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_delete_pin)
-
+            var share_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.share_note)!!
+            share_btn.setOnClickListener {
+                var gson = Gson()
+                var note_gson = gson.toJson(note)
+                createData(note_gson, note.title)
+            }
             var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
             delete_btn.setOnClickListener {
                 var note_id = note.note_id!!
@@ -807,6 +824,13 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         bottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_delete_pin)
 
+        var share_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.share_note)!!
+        share_btn.setOnClickListener {
+            var gson = Gson()
+            var note_gson = gson.toJson(note)
+            createData(note_gson, note.title)
+        }
+
         var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
         delete_btn.setOnClickListener {
             var note_id = note.note_id!!
@@ -878,7 +902,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
             bottomSheetDialog = BottomSheetDialog(this, R.style.MyTransparentBottomSheetDialogTheme)
             bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_delete_pin)
-
+            var share_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.share_note)!!
+            share_btn.setOnClickListener {
+                var gson = Gson()
+                var note_gson = gson.toJson(note)
+                createData(note_gson, note.title)
+            }
             var delete_btn: LinearLayout = bottomSheetDialog.findViewById(R.id.delete_note)!!
             delete_btn.setOnClickListener {
                 var note_id = note.note_id!!
@@ -941,6 +970,38 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
 
     }
+
+    private fun createData(noteGson: String?, title: String?) {
+        try {
+            val values = ContentValues()
+            values.put(
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                title+" - "+ Timestamp.now().seconds
+            ) //file name
+            values.put(
+                MediaStore.MediaColumns.MIME_TYPE,
+                "text/plain"
+            ) //file extension, will automatically add to file
+            values.put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_DOWNLOADS + "/NoteIt/"
+            ) //end "/" is not mandatory
+            val uri: Uri? = contentResolver.insert(
+                MediaStore.Files.getContentUri("external"),
+                values
+            ) //important!
+            val outputStream: OutputStream? = contentResolver.openOutputStream(uri!!)
+            outputStream!!.write(noteGson!!.toByteArray())
+            outputStream!!.close()
+            var share = Intent(Intent.ACTION_SEND)
+            share.putExtra(Intent.EXTRA_STREAM, uri)
+            share.setType("text/plain")
+            startActivity(share)
+        } catch (e: IOException) {
+            Toast.makeText(this, "Fail to create file", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 }
 

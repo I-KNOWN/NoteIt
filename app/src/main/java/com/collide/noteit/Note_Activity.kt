@@ -66,7 +66,7 @@ class Note_Activity : AppCompatActivity() {
     lateinit var dialog: Dialog
     lateinit var dialog_style: BottomSheetDialog
     lateinit var dialog_color: BottomSheetDialog
-    var intentcalled = false
+    var intentcalled = true
 
     private lateinit var connectivityObserver: ConnectivityObserver
 
@@ -328,6 +328,7 @@ class Note_Activity : AppCompatActivity() {
 
         if(intent.getStringExtra("change_img") != null){
             image_changed = true
+            intentcalled = false
         }
 
         binding.etTitle.setText(note_data.title)
@@ -369,6 +370,7 @@ class Note_Activity : AppCompatActivity() {
                 .load(uri)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(binding.imageViewNote)
+            Toast.makeText(this,"${uri}", Toast.LENGTH_SHORT).show()
             binding.imageViewNote.visibility = ViewGroup.VISIBLE
             binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
             binding.parentofparent.visibility = ViewGroup.VISIBLE
@@ -778,12 +780,7 @@ class Note_Activity : AppCompatActivity() {
                 .document(note_id)
                 .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
                 .addOnSuccessListener {
-                    Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-                    if(!intentcalled){
-                        intentcalled = true
-                        val intent = Intent(this@Note_Activity, MainActivity::class.java)
-                        startActivity(intent)
-                    }
+
                     if(imageUri.isNotEmpty() && image_changed){
                         uploadPhotos(desc)
                     }
@@ -794,7 +791,7 @@ class Note_Activity : AppCompatActivity() {
                     Log.d("Data","Exception Firebase: "+it.message)
                     Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
                 }
-            if(!intentcalled){
+            if(intentcalled){
                 intentcalled = true
                 val intent = Intent(this@Note_Activity, MainActivity::class.java)
                 startActivity(intent)
@@ -874,11 +871,7 @@ class Note_Activity : AppCompatActivity() {
                         .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
                         .addOnSuccessListener {
                             Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-                            if(!intentcalled){
-                                intentcalled = true
-                                val intent = Intent(this@Note_Activity, MainActivity::class.java)
-                                startActivity(intent)
-                            }
+
                             if(imageUri.isNotEmpty()){
                                 uploadPhotos(desc)
                             }
@@ -889,7 +882,7 @@ class Note_Activity : AppCompatActivity() {
                             Log.d("Data","Exception Firebase: "+it.message)
                             Toast.makeText(this, "Data Failed to save", Toast.LENGTH_SHORT).show()
                         }
-            if(!intentcalled){
+            if(intentcalled){
                 intentcalled = true
                 val intent = Intent(this@Note_Activity, MainActivity::class.java)
                 startActivity(intent)
@@ -1433,6 +1426,7 @@ class Note_Activity : AppCompatActivity() {
                 val downloadUrl = imageRef.downloadUrl
                 downloadUrl.addOnSuccessListener {
                     remoteUri ->
+
                     Log.d("remote_url",""+remoteUri)
                     updatePhotoDatabase(remoteUri.toString(),desc)
                 }
@@ -1452,12 +1446,23 @@ class Note_Activity : AppCompatActivity() {
                 .collection("Mynotes")
                 .document(note_id)
                 .set(Note_Data_Model(binding.etTitle.text.toString(), binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
+                .addOnSuccessListener {
+                        intentcalled = true
+                        val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                        startActivity(intent)
+                }
+
         } else{
             firebaseFirestore.collection("Notes")
                 .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .collection("Mynotes")
                 .document(note_id)
                 .set(Note_Data_Model(desc, binding.etDesc.text.toString(), remoteUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
+                .addOnSuccessListener {
+                        intentcalled = true
+                        val intent = Intent(this@Note_Activity, MainActivity::class.java)
+                        startActivity(intent)
+                }
         }
 
 
@@ -1493,6 +1498,7 @@ class Note_Activity : AppCompatActivity() {
             Log.d("camera_intent_uri","$imageUri")
             binding.imageViewNote.setImageURI(uri)
             image_changed = true
+            intentcalled = false
             Log.d("uir",""+binding.imageViewNote)
         }
     }
