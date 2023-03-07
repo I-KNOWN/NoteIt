@@ -99,7 +99,7 @@
                     android:layout_height="80dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/back_img_test"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent" />

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".SignUp.Avatar_Activity"
     android:padding="20dp"
+    style="@style/SCREEN"
     >
 
 
@@ -14,7 +15,7 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:contentDescription="App Logo"
-        android:src="@drawable/app_logo"
+        style="@style/app_logo"
         android:transitionName="logo_big"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_semibold_italic"
             android:text="Pick Your Avatar"
-            android:textColor="@color/black"
+            style="@style/Text9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +56,7 @@
         android:id="@+id/avatarSelectorBtn"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/login_button_background_rounded"
+        style="@style/proflie_login_btn"
         android:paddingStart="35dp"
         android:paddingTop="13dp"
         android:paddingEnd="35dp"
@@ -73,7 +74,7 @@
             android:letterSpacing=".02"
             android:text="Login"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            style="@style/TEXT12"
             android:textSize="13dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
             app:layout_constraintEnd_toStartOf="@+id/imageView2"
@@ -86,7 +87,8 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/right_icon_main"
+            android:background="@drawable/right_icon_main"
+            style="@style/bk_btn_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

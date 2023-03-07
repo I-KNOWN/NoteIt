@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
-
     android:clipToPadding="false"
     android:clipToOutline="false"
     android:clipChildren="false"
@@ -14,6 +13,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/transparent"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
             android:id="@+id/avatar_selection_view_card"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            app:cardBackgroundColor="@color/grey_100"
+            style="@style/profile_back"
             app:cardCornerRadius="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/avatar_selection_view_card"
             android:layout_gravity="center"
-            android:backgroundTint="@null"
+            android:backgroundTint="@color/white"
             android:clipChildren="false"
             android:clipToPadding="false"
             app:cardCornerRadius="200dp"

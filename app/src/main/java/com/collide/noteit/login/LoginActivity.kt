@@ -309,8 +309,7 @@ class LoginActivity : AppCompatActivity() {
                     if(!it.hasChild(firebaseUser!!.uid)){
                         Log.d("User", "User Created")
                         userCreation(auth.user!!,"GOOGLE |")
-                        loadingDialog.isDismis()
-                        updateUI_avatar()
+
                     } else{
                         loadingDialog.isDismis()
                         updateUI_Google(firebaseUser)
@@ -327,7 +326,10 @@ class LoginActivity : AppCompatActivity() {
         var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
         var formatedDate = DateFormat.format(currentdate)
         val user_data = User_Profile_Detail(user.uid, user.displayName, user.email, "User_Icon/av${random}"+".png", provider, formatedDate)
-        database.child("users").child(user.uid).setValue(user_data)
+        database.child("users").child(user.uid).setValue(user_data).addOnCompleteListener {
+            loadingDialog.isDismis()
+            updateUI_avatar()
+        }
     }
 
     private fun updateUI_Google(firebaseUser: FirebaseUser?) {
