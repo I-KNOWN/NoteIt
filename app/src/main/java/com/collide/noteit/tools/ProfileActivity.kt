@@ -252,7 +252,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun readfile() {
         var intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.setType("*/*")
+        intent.setType("text/plain")
         galleryLauncher.launch(intent)
     }
 
