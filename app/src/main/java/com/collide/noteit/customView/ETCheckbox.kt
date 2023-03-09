@@ -104,7 +104,7 @@ class ETCheckbox(context: Context?, attrs: AttributeSet?) : LinearLayout(context
             var etbox = it.parent.parent.parent.parent as LinearLayout
             var layoutbox = it.parent.parent.parent.parent.parent as LinearLayout
 
-            if(etbox.childCount == 1){
+            if(etbox.childCount == 2){
                 layoutbox.removeView(etbox)
             } else{
                 etbox.removeView(et)

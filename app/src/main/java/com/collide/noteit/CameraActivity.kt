@@ -78,6 +78,7 @@ class CameraActivity : AppCompatActivity() {
         }
         binding.bkBtn.setOnClickListener{
             val intent = Intent(this@CameraActivity, MainActivity::class.java)
+            finish()
             startActivity(intent)
             overridePendingTransition(R.anim.left_slide_in_acitivity, R.anim.right_slide_out_acitivity)
 
@@ -97,6 +98,7 @@ class CameraActivity : AppCompatActivity() {
             var uri = it.data!!.data
             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
             intent.putExtra("photo_url",uri.toString())
+            finish()
             startActivity(intent)
             overridePendingTransition(R.anim.right_slide_in_acitivity, R.anim.left_slide_out_acitivity)
 
@@ -141,6 +143,7 @@ class CameraActivity : AppCompatActivity() {
 
                     val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                     intent.putExtra("photo_url",savedUri.toString())
+                    finish()
                     startActivity(intent)
                     overridePendingTransition(R.anim.right_slide_in_acitivity, R.anim.left_slide_out_acitivity)
                     binding.flashImg.setImageDrawable(ContextCompat.getDrawable(this@CameraActivity, R.drawable.ic_baseline_flash_off))

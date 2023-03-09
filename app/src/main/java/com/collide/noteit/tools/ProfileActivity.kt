@@ -105,7 +105,6 @@ class ProfileActivity : AppCompatActivity() {
         }
 
 
-        Toast.makeText(this,"${intent.getStringExtra("change") != null}", Toast.LENGTH_LONG).show()
         if(intent.getStringExtra("change")!= null){
             var loc = intent.getStringExtra("change")
 
@@ -275,6 +274,7 @@ class ProfileActivity : AppCompatActivity() {
             }
             var intent = Intent(this, Note_Activity::class.java)
             intent.putExtra("note_data",builder.toString())
+            intent.putExtra("intent_main","Profile")
             startActivity(intent)
         }
     }

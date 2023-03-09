@@ -369,23 +369,17 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/cardView2" />
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/cardView2"
-                        android:layout_width="180dp"
-                        android:layout_height="wrap_content"
-                        style="@style/theme_bg"
-                        app:cardCornerRadius="40dp"
-                        app:cardElevation="0dp"
-                        app:contentPadding="7dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/textView8"
-                        app:layout_constraintTop_toTopOf="parent">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:id="@+id/cardView2"
+                            android:layout_width="180dp"
+                            android:layout_height="wrap_content"
+                            style="@style/upload_back"
+                            android:padding="4dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textView8"
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <TextView
                                 android:id="@+id/textView10"
@@ -421,7 +415,6 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -432,9 +425,9 @@
                     android:layout_marginTop="10dp"
                     style="@style/link_btn"
                     android:paddingLeft="20dp"
-                    android:paddingTop="13dp"
+                    android:paddingTop="12dp"
                     android:paddingRight="20dp"
-                    android:paddingBottom="13dp"
+                    android:paddingBottom="12dp"
                     app:layout_constraintBottom_toTopOf="@+id/facebook_link_btn"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
                     tools:layout_editor_absoluteX="65dp">
@@ -469,9 +462,9 @@
                     android:layout_marginTop="10dp"
                     style="@style/link_btn"
                     android:paddingLeft="20dp"
-                    android:paddingTop="13dp"
+                    android:paddingTop="12dp"
                     android:paddingRight="20dp"
-                    android:paddingBottom="13dp"
+                    android:paddingBottom="12dp"
                     app:layout_constraintBottom_toTopOf="@+id/SignOut"
                     app:layout_constraintTop_toBottomOf="@+id/google_link_btn">
 

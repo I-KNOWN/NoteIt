@@ -256,10 +256,11 @@ class LoginActivity : AppCompatActivity() {
                                 userCreation(auth.currentUser!!, "FACEBOOK |")
                                 loadingDialog.isDismis()
                                 updateUI_avatar()
+                            }else{
+                                loadingDialog.isDismis()
+                                updateUI_Facebook(user)
                             }
                         }
-                    loadingDialog.isDismis()
-                    updateUI_Facebook(user)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("User_login_fab", "signInWithCredential:failure", task.exception)
@@ -335,7 +336,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUI_Google(firebaseUser: FirebaseUser?) {
         if (firebaseUser != null) {
             val intent = Intent(this, MainActivity::class.java)
-
+            finish()
             startActivity(intent)
         }
     }
