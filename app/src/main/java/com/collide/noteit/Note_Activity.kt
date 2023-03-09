@@ -34,6 +34,7 @@ import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
 import com.collide.noteit.observeconnectivity.ConnectivityObserver
 import com.collide.noteit.observeconnectivity.NetworkConnectivityObserver
+import com.collide.noteit.tools.loadingDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -79,6 +80,7 @@ class Note_Activity : AppCompatActivity() {
     lateinit var timestamp: Timestamp
     private var storageReference: StorageReference = FirebaseStorage.getInstance().getReference()
     private lateinit var auth: FirebaseAuth
+    private var loadingDialog = loadingDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -460,6 +462,7 @@ class Note_Activity : AppCompatActivity() {
     }
 
     private fun saveNote() {
+        loadingDialog.startloading()
         if(binding.etTitle.text.isEmpty() && binding.etDesc.text.isEmpty()){
             val intent = Intent(this@Note_Activity, MainActivity::class.java)
             finish()
@@ -523,6 +526,7 @@ class Note_Activity : AppCompatActivity() {
                 intentcalled = true
                 val intent = Intent(this@Note_Activity, MainActivity::class.java)
                 finish()
+                loadingDialog.isDismis()
                 startActivity(intent)
             }
 
@@ -600,6 +604,7 @@ class Note_Activity : AppCompatActivity() {
                 intentcalled = true
                 val intent = Intent(this@Note_Activity, MainActivity::class.java)
                 finish()
+                loadingDialog.isDismis()
                 startActivity(intent)
             }
         }
@@ -1106,6 +1111,7 @@ class Note_Activity : AppCompatActivity() {
                         intentcalled = true
                         val intent = Intent(this@Note_Activity, MainActivity::class.java)
                     finish()
+                    loadingDialog.isDismis()
                     startActivity(intent)
                 }
 
@@ -1119,7 +1125,7 @@ class Note_Activity : AppCompatActivity() {
                         intentcalled = true
                         val intent = Intent(this@Note_Activity, MainActivity::class.java)
                     finish()
-
+                    loadingDialog.isDismis()
                     startActivity(intent)
                 }
         }
