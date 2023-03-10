@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -85,6 +86,20 @@ class SignupActivity : AppCompatActivity() {
 
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                val pair1 = androidx.core.util.Pair<View, String>(binding.logoView, "logo_big")
+                val pair2 = androidx.core.util.Pair<View, String>(binding.loginGoogleBtn, "google_login_eq")
+                val pair3 = androidx.core.util.Pair<View, String>(binding.loginFacebookBtn, "facebook_login_eq")
+//            val pair4 = androidx.core.util.Pair<View, String>(binding.textView3, "cred_text1")
+//            val pair5 = androidx.core.util.Pair<View, String>(binding.signUpEmail, "cred_text2")
+                val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this@SignupActivity, pair1,pair2,pair3 ).toBundle()
+                finish()
+                startActivity(intent, option)
+            }
+        })
+
         binding.loginFacebookBtn.setOnClickListener {
 
             loadingDialog.startloading()
@@ -121,6 +136,7 @@ class SignupActivity : AppCompatActivity() {
 //            val pair4 = androidx.core.util.Pair<View, String>(binding.textView3, "cred_text1")
 //            val pair5 = androidx.core.util.Pair<View, String>(binding.signUpEmail, "cred_text2")
             val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pair1,pair2,pair3 ).toBundle()
+            finish()
             startActivity(intent, option)
 
 //            onBackPressedDispatcher.onBackPressed()
@@ -272,9 +288,8 @@ class SignupActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             if(!it.hasChild(firebaseUser!!.uid)){
                                 Log.d("User", "User Created")
-                                userCreation(auth.currentUser!!, "EMAIL |")
+                                userCreationEmail(auth.currentUser!!, "EMAIL |",name)
                                 auth.currentUser!!.sendEmailVerification()
-                                loadingDialog.isDismis()
                                 Toast.makeText(this, "Email Verification Sent!!!", Toast.LENGTH_SHORT).show()
                             }
                         }.addOnFailureListener {
@@ -300,6 +315,20 @@ class SignupActivity : AppCompatActivity() {
         database.child("users").child(user.uid).setValue(user_data).addOnCompleteListener {
             loadingDialog.isDismis()
             updateUI_avatar()
+        }
+    }
+
+
+
+    private fun userCreationEmail(user: FirebaseUser, provider: String, name:String) {
+        val random = (1..8).random()
+        var currentdate = Calendar.getInstance().time
+        var DateFormat = SimpleDateFormat("EEE, MMM dd, ''yyyy", Locale.getDefault())
+        var formatedDate = DateFormat.format(currentdate)
+        val user_data = User_Profile_Detail(user.uid, name, user.email, "User_Icon/av${random}"+".png", provider, formatedDate)
+        database.child("users").child(user.uid).setValue(user_data).addOnCompleteListener {
+            auth.signOut()
+            loadingDialog.isDismis()
         }
     }
 

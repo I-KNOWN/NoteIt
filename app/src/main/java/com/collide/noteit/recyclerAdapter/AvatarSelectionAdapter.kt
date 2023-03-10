@@ -61,7 +61,6 @@ class AvatarSelectionAdapter(var context: Context):
 
             }
 
-
         }
 
     }
@@ -77,35 +76,8 @@ class AvatarSelectionAdapter(var context: Context):
 
         holder.imageview.setImageDrawable(ContextCompat.getDrawable(context, data.icon_uri!!))
 
-//        val uri = Uri.parse(data.icon_uri)
-//
-//
-//
-//        Picasso
-//            .get()
-//            .load(uri)
-//            .into(holder.imageview)
-
-
         if(index_position  == position){
-
-
             var random_number = (1..5).random()
-
-//            when(random_number){
-//                1 ->
-//                    _drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selected1)
-//                2 ->
-//                    _drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selected2)
-//                3 ->
-//                    _drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selected3)
-//                4 ->
-//                    _drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selected4)
-//                5 ->
-//                    _drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selected5)
-//
-//            }
-
 
             when(random_number){
                 1 ->
@@ -130,10 +102,6 @@ class AvatarSelectionAdapter(var context: Context):
             holder.cardview2.visibility = View.VISIBLE
 
         } else {
-//            var border_drawable = ContextCompat.getDrawable(context,R.drawable.circular_avatar_selection)
-//
-//            holder.imageview.setImageDrawable(border_drawable)
-
             holder.cardview.setCardBackgroundColor(Color.parseColor("#DEDEDE"))
 
             holder.cardview2.visibility = View.INVISIBLE

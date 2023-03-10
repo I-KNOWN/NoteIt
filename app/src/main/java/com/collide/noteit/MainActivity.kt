@@ -26,11 +26,14 @@ import android.widget.LinearLayout
 import android.widget.SearchView.OnQueryTextListener
 import android.widget.TextView
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.BuildCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,6 +50,7 @@ import com.collide.noteit.login.LoginActivity
 import com.collide.noteit.recyclerAdapter.NoteDisplayAdapter
 import com.collide.noteit.recyclerAdapter.NoteViewDispalyAdapter
 import com.collide.noteit.tools.ProfileActivity
+import com.collide.noteit.tools.loadingDialog
 //import com.facebook.AccessToken
 //import com.facebook.CallbackManager
 //import com.facebook.FacebookCallback
@@ -129,6 +133,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     var iconfilter_bool = false
 
     var current_query_string = ""
+    private var loadingDialog = loadingDialog(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,11 +141,12 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val scoresRef = Firebase.database.getReference("users")
-//        scoresRef.keepSynced(true)
 
-
-
+            onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finish()
+                }
+            })
 
 
         when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -216,18 +222,6 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 Log.d("count_query", ""+it.exception)
             }
         }
-
-//        query_ff.addSnapshotListener(MetadataChanges.INCLUDE){ querySnapshot, e->
-//            if(e != null){
-//                return@addSnapshotListener
-//            }
-//            for(change in querySnapshot!!.documentChanges){
-//                if(change.type == DocumentChange.Type.ADDED){
-//                    Toast.makeText(this,"here: "+change.document.data.size, Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-
         binding.filter.setOnClickListener {
             filterItem()
         }
@@ -267,9 +261,6 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
         })
 
         binding.searchView.setOnQueryTextFocusChangeListener { view, b ->
-
-
-
             var transition: TransitionDrawable = view.background as TransitionDrawable
             if(b == true){
                 transition.startTransition(300)
@@ -286,6 +277,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
 
         binding.btnCamera.setOnClickListener {
             var intent = Intent(this, CameraActivity::class.java)
+            finish()
             startActivity(intent)
             overridePendingTransition(R.anim.right_slide_in_acitivity, R.anim.left_slide_out_acitivity)
 
@@ -401,27 +393,6 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
 
-//    override fun onTouchEvent(event: MotionEvent?): Boolean {
-//
-//        when(event?.action){
-//            MotionEvent.ACTION_DOWN ->{
-//                x1 = event.x
-//                y1 = event.y
-//
-//            }
-//            MotionEvent.ACTION_UP ->{
-//                x2 = event.x
-//                y2 = event.y
-//                if(x1 < x2){
-//                    var intent = Intent(this, CameraActivity::class.java)
-//                    startActivity(intent)
-//                }
-//            }
-//        }
-//        return super.onTouchEvent(event)
-//
-//    }
-
     private fun filterdListUnpinned(newText: String?) {
         current_query_string = newText!!
         filteredLIst_unpin.clear()
@@ -472,6 +443,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     }
 
     private fun setRecyclerView() {
+        loadingDialog.startloading()
         noteArrayListUnpinned.clear()
         noteArrayListPinned.clear()
         val ref = firebaseFirestore.collection("Notes")
@@ -508,34 +480,11 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 notedisplayadapterpinned.notifyDataSetChanged()
             }
             setupTvNote()
+            loadingDialog.isDismis()
         }.addOnFailureListener {
             Log.d("it_exp",""+it.message)
         }
     }
-
-
-
-//    private fun setupRecyclerView() {
-//        var query: Query = firebaseFirestore.collection("Notes")
-//            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-//            .collection("Mynotes").orderBy("title", Query.Direction.DESCENDING).whereEqualTo("pinned_note", "Unpinned")
-//        var optino:FirestoreRecyclerOptions<Note_Data_Model> = FirestoreRecyclerOptions.Builder<Note_Data_Model>()
-//            .setQuery(query, Note_Data_Model::class.java)
-//            .build()
-//
-//
-//        notedisplayadapter = NoteDisplayAdapter(optino, this)
-//        binding.recyclerViewUnpinned.layoutManager = GridLayoutManager(this, 2)
-//        binding.recyclerViewUnpinned.adapter = notedisplayadapter
-//        notedisplayadapter.notifyDataSetChanged()
-//    }
-
-    //    private fun setDataList(notedisplayadapter: NoteDisplayAdapter) {
-//        var data_list = mutableListOf<Note_Data_Model>()
-//
-//
-//        notedisplayadapter.setDataModel(data_list)
-//    }
 
     private fun setProfileIcon() {
 
@@ -578,31 +527,10 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                     }
 
 
-//                    firebaseReference = firebaseReference.child(photourl)
-//                    Log.d("User",""+firebaseReference)
-//                    firebaseReference.downloadUrl.addOnSuccessListener {
-//
-//                        Glide.with(this)
-//                            .load(it)
-//                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-//                            .into(binding.profileIcon)
-//
-//                        saveProfile(it.toString())
-//
-//                    }.addOnFailureListener {
-//                        Log.d("FireStore","Fail to Get Data" + it.message)
-//                    }
-
                 }
         }
 
 
-    }
-
-    private fun saveProfile(remote: String) {
-        var sharedPreferences = getSharedPreferences(SHARED_PREFERS, MODE_PRIVATE)
-        var editor = sharedPreferences.edit()
-        editor.putString(URI_, remote)
     }
     private fun loadProfileLocalData(): Boolean{
         var sharedPreferences = getSharedPreferences(SHARED_PREFERS, MODE_PRIVATE)
@@ -631,9 +559,13 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
     override fun onNoteClick(position: Int, view: View) {
         var note: Note_Data_Model
         if(view.transitionName == "RU"){
-            note = noteArrayListUnpinned[position]
+            val cList = notedisplayadapterunpinned.getCurrentList()
+            Log.d("Data------", "$cList")
+            note = cList[position]
         }else{
-            note = noteArrayListPinned[position]
+            val cList = notedisplayadapterpinned.getCurrentList()
+            Log.d("Data------", "$cList")
+            note = cList[position]
         }
 
         var intent = Intent(this, Note_Activity::class.java)
@@ -682,7 +614,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 .document(note_id)
                 .delete()
                 .addOnSuccessListener {
-
+                    setRecyclerView()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Note Unable Delete", Toast.LENGTH_LONG).show()
@@ -714,7 +646,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 .document(note.note_id!!)
                 .update("pinned_note", "Pinned", "timestamp2", time_stamp)
                 .addOnSuccessListener {
-
+                    setRecyclerView()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Unable to Pin Note",Toast.LENGTH_LONG).show()
@@ -849,7 +781,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 .document(note_id)
                 .delete()
                 .addOnSuccessListener {
-
+                    setRecyclerView()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Note Unable Delete", Toast.LENGTH_LONG).show()
@@ -881,7 +813,7 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
                 .document(note.note_id!!)
                 .update("pinned_note", "Unpinned", "timestamp2", time_stamp)
                 .addOnSuccessListener {
-
+                    setRecyclerView()
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Unable to Pin Note",Toast.LENGTH_LONG).show()
@@ -977,19 +909,19 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             values.put(
                 MediaStore.MediaColumns.DISPLAY_NAME,
                 title+" - "+ Timestamp.now().seconds
-            ) //file name
+            )
             values.put(
                 MediaStore.MediaColumns.MIME_TYPE,
                 "text/plain"
-            ) //file extension, will automatically add to file
+            )
             values.put(
                 MediaStore.MediaColumns.RELATIVE_PATH,
                 Environment.DIRECTORY_DOWNLOADS + "/NoteIt/"
-            ) //end "/" is not mandatory
+            )
             val uri: Uri? = contentResolver.insert(
                 MediaStore.Files.getContentUri("external"),
                 values
-            ) //important!
+            )
             val outputStream: OutputStream? = contentResolver.openOutputStream(uri!!)
             outputStream!!.write(noteGson!!.toByteArray())
             outputStream!!.close()
@@ -1001,7 +933,6 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             Toast.makeText(this, "Fail to create file", Toast.LENGTH_SHORT).show()
         }
     }
-
 
 }
 

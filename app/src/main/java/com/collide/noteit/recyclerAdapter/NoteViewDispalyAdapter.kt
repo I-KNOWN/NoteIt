@@ -85,22 +85,6 @@ class NoteViewDispalyAdapter(private var noteList: ArrayList<Note_Data_Model>, v
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.imagebox)
             holder.imagebox.visibility = ImageView.VISIBLE
-//            var data = note.image_URL!!.split("|")
-//            var path_string = data[0]
-//            Log.d("data",""+path_string)
-//
-//            storageRef.child(path_string)
-//                .downloadUrl
-//                .addOnSuccessListener {
-//                    Glide.with(context)
-//                        .load(it)
-//                        .diskCacheStrategy(DiskCacheStrategy.DATA)
-//                        .into(holder.imagebox)
-//
-//                    holder.imagebox.visibility = ImageView.VISIBLE
-//                }.addOnFailureListener {
-//
-//                }
         }else{
             holder.imagebox.visibility = ImageView.INVISIBLE
         }

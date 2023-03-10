@@ -30,7 +30,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.collide.noteit.customView.ETCheckbox
 import com.collide.noteit.dataClass.Note_Data_Model
-import com.collide.noteit.dataClass.Note_Image_Data_Model
 import com.collide.noteit.databinding.ActivityNoteBinding
 import com.collide.noteit.observeconnectivity.ConnectivityObserver
 import com.collide.noteit.observeconnectivity.NetworkConnectivityObserver
@@ -62,7 +61,6 @@ class Note_Activity : AppCompatActivity() {
         var connectivity = ""
     }
     var image_changed = false
-    val photos: MutableList<Note_Image_Data_Model> = mutableListOf()
     var note_id: String = ""
     var order_view_all = ""
     var edit_text_data_all = ""
@@ -103,8 +101,6 @@ class Note_Activity : AppCompatActivity() {
             var ll = findViewById<LinearLayout>(R.id.layout_linear_adder)
             ll.layoutParams = parmas
             ll.setPadding(0, 0, 0, 0)
-            photos.clear()
-            Log.d("hold", ""+photos)
         }
         binding.addTask.setOnClickListener {
             createTask(it)
@@ -161,7 +157,10 @@ class Note_Activity : AppCompatActivity() {
         if(intent.getStringExtra("intent_main") != null){
             timestamp = Timestamp.now()
             pinned_note = "Unpinned"
+            note_id = UUID.randomUUID().toString()
+
         } else{
+            note_id = note_data.note_id.toString()
             timestamp = note_data.timestamp!!
             pinned_note = note_data.pinned_note!!
         }
@@ -196,7 +195,6 @@ class Note_Activity : AppCompatActivity() {
             binding.imageDeleteNote.visibility = ViewGroup.VISIBLE
             binding.parentofparent.visibility = ViewGroup.VISIBLE
         }
-        note_id = note_data.note_id.toString()
         formatedDate = note_data.created_date!!
 
         var orderlist = note_data.order_view_all!!.split("||||")
@@ -590,11 +588,9 @@ class Note_Activity : AppCompatActivity() {
                         .document(note_id)
                         .set(Note_Data_Model(desc, binding.etDesc.text.toString(), imageUri, order_view_all, edit_text_data_all, task_data_all, note_id, note_color_hole, task_data_check_all, formatedDate, pinned_note, timestamp, timestamp))
                         .addOnSuccessListener {
-                            Toast.makeText(this,"Data Saved in Firestore", Toast.LENGTH_SHORT).show()
-                            if(imageUri.isNotEmpty()){
+                            if(imageUri.isNotEmpty() && image_changed){
                                 uploadPhotos(desc)
                             }
-                            finish()
                         }
                         .addOnFailureListener {
                             Log.d("Data","Exception Firebase: "+it.message)

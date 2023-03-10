@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.databinding.ActivityPreviewBinding
+import com.collide.noteit.tools.loadingDialog
 import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import com.google.mlkit.vision.common.InputImage
@@ -25,6 +26,7 @@ class PreviewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPreviewBinding
     private lateinit var textRecognition: TextRecognizer
+    private var loadingDialog = loadingDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +62,7 @@ class PreviewActivity : AppCompatActivity() {
     }
 
     private fun RecoganizeText(photouri: Uri?) {
+        loadingDialog.startloading()
         try{
             val inputImage = InputImage.fromFilePath(this, photouri!!)
 
@@ -86,6 +89,7 @@ class PreviewActivity : AppCompatActivity() {
                     intent.putExtra("change_img", "true")
                     finish()
                     startActivity(intent)
+                    loadingDialog.isDismis()
 
                 }
                 .addOnFailureListener{
