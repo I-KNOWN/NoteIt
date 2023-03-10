@@ -2,86 +2,47 @@ package com.collide.noteit
 
 import android.content.ContentValues
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.os.VibratorManager
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.provider.MediaStore
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.SearchView.OnQueryTextListener
 import android.widget.TextView
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.BuildCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.collide.noteit.SignUp.Avatar_Activity
 import com.collide.noteit.dataClass.Note_Data_Model
 import com.collide.noteit.dataClass.User_Profile_Detail
 import com.collide.noteit.databinding.ActivityMainBinding
-import com.collide.noteit.login.LoginActivity
-import com.collide.noteit.recyclerAdapter.NoteDisplayAdapter
 import com.collide.noteit.recyclerAdapter.NoteViewDispalyAdapter
 import com.collide.noteit.tools.ProfileActivity
 import com.collide.noteit.tools.loadingDialog
-//import com.facebook.AccessToken
-//import com.facebook.CallbackManager
-//import com.facebook.FacebookCallback
-//import com.facebook.FacebookException
-//import com.facebook.login.LoginManager
-//import com.facebook.login.LoginResult
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthCredential
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.google.firestore.v1.AggregationResult
 import com.google.gson.Gson
-import com.google.type.DateTime
-import com.squareup.picasso.Picasso
 import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
@@ -205,9 +166,6 @@ class MainActivity : AppCompatActivity(), NoteViewDispalyAdapter.onNoteListener 
             })
 
         setProfileIcon()
-//        setDataList(notedisplayadapter)
-
-//        setupRecyclerView()
         setRecyclerView()
 
         var query_ff = firebaseFirestore.collection("Notes")
