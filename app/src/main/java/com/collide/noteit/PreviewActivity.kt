@@ -97,7 +97,8 @@ class PreviewActivity : AppCompatActivity() {
 
                 }
         }catch (e: java.lang.Exception){
-            Toast.makeText(this,"Failed", Toast.LENGTH_LONG).show()
+            Log.d("newException", e.message+"")
+            Toast.makeText(this,"Failed" + e.message, Toast.LENGTH_LONG).show()
         }
     }
 }

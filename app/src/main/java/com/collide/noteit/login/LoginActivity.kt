@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -222,15 +223,31 @@ class LoginActivity : AppCompatActivity() {
         callbackManager.onActivityResult(requestCode, resultCode, data)
     }
     private fun checkAndRequestPerm() {
-        PermissionX.init(this)
-            .permissions(Manifest.permission.CAMERA)
-            .request { allGranted, grantedList, deniedList ->
-                if (allGranted) {
-                    Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_LONG).show()
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.S){
+            PermissionX.init(this)
+                .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .request { allGranted, grantedList, deniedList ->
+                    if (allGranted) {
+                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_LONG).show()
+                    }
                 }
-            }    }
+        }else{
+            PermissionX.init(this)
+                .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES)
+                .request { allGranted, grantedList, deniedList ->
+                    if (allGranted) {
+                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_LONG).show()
+                    }
+                }
+        }
+
+
+    }
 
     private fun emailValidation(charseq: String): Boolean {
         return charseq != "" && Patterns.EMAIL_ADDRESS.matcher(charseq).matches()
