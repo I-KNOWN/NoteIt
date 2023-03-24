@@ -167,21 +167,27 @@ class Note_Activity : AppCompatActivity() {
         when(note_data.note_color){
             "blue" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_blue)
+                note_color_hole = "blue"
             }
             "red" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_red)
+                note_color_hole = "red"
             }
             "green" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_green)
+                note_color_hole = "green"
             }
             "pink" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_pink)
+                note_color_hole = "pink"
             }
             "purple" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_purple)
+                note_color_hole = "purple"
             }
             "yellow" ->{
                 binding.noteColorBtn.setBackgroundResource(R.drawable.hole_punch_circle_yellow)
+                note_color_hole = "yellow"
             }
         }
         if(note_data.image_URL != ""){
@@ -640,7 +646,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -675,7 +681,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -864,7 +870,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -912,7 +918,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -948,7 +954,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -984,7 +990,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -1019,7 +1025,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
@@ -1054,7 +1060,7 @@ class Note_Activity : AppCompatActivity() {
                     Toast.makeText(this,"Text Selection is needed", Toast.LENGTH_LONG).show()
                 }
             }
-            if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
+            else if(binding.layoutLinearAdder.focusedChild is AppCompatEditText){
                 var childview = binding.layoutLinearAdder.focusedChild as AppCompatEditText
                 if(childview.hasSelection()){
                     spannableString = SpannableStringBuilder(childview.text)
